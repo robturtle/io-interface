@@ -1,3 +1,4 @@
 *.js
+!.huskyrc.js
 node_modules/
 .vscode
