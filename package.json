@@ -1,0 +1,23 @@
+{
+  "name": "io-interface",
+  "version": "1.0.0",
+  "description": "Generate io-ts codec solution from TypeScript native interface",
+  "main": "index.js",
+  "scripts": {
+    "test": "tsc && node test/compile && mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robturtle/io-interface.git"
+  },
+  "keywords": [
+    "TypeScript",
+    "io-ts"
+  ],
+  "author": "Yang Liu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/robturtle/io-interface/issues"
+  },
+  "homepage": "https://github.com/robturtle/io-interface#readme"
+}
