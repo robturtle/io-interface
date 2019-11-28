@@ -22,10 +22,16 @@
   "homepage": "https://github.com/robturtle/io-interface#readme",
   "devDependencies": {
     "husky": "^3.1.0",
+    "io-ts": "^2.0.1",
     "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1"
+    "pretty-quick": "^2.0.1",
+    "typescript": "^3.7.2"
   },
   "dependencies": {
-    "ts-transformer-interface": "^1.1.0"
+    "ts-transformer-interface": "^1.2.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=2.4.1",
+    "io-ts": ">=2.0.1"
   }
 }
