@@ -32,7 +32,6 @@ const ParameterizedTypeC: t.Type<runtime.ParameterizedType> = t.type({
 
 export class Decoder {
   readonly casters: Casters = {};
-  readonly arrayCasters: Casters = {};
 
   constructor(schemas: runtime.Schema[] = []) {
     schemas.forEach(s => this.registerSchema(s));
@@ -60,7 +59,6 @@ export class Decoder {
     } else {
       this.casters[name] = t.partial(this.buildCasters(name, optional), name);
     }
-    this.arrayCasters[name] = t.array(this.casters[name]);
   }
 
   private getCaster<T>(typeName: string): Caster<T> {
@@ -71,10 +69,10 @@ export class Decoder {
   }
 
   private getArrayCaster<T>(typeName: string): Caster<T[]> {
-    if (!(typeName in this.arrayCasters)) {
+    if (!(typeName in this.casters)) {
       throw new Error(`decoder for '${typeName}[]' not registered`);
     }
-    return this.arrayCasters[typeName];
+    return t.array(this.casters[typeName]);
   }
 
   private buildCasters(name: string, props: runtime.Property[]): Casters {
