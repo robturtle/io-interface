@@ -34,7 +34,7 @@ export class Decoder {
   readonly casters: Casters = {};
   readonly arrayCasters: Casters = {};
 
-  constructor(schemas: runtime.Schema[]) {
+  constructor(schemas: runtime.Schema[] = []) {
     schemas.forEach(s => this.registerSchema(s));
   }
 
