@@ -16,8 +16,8 @@
     "io-ts"
   ],
   "files": [
-    "dist/index.js",
-    "dist/index.d.ts"
+    "index.js",
+    "index.d.ts"
   ],
   "author": "Yang Liu",
   "license": "MIT",
