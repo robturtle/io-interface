@@ -7,8 +7,7 @@ export interface Casters {
 }
 export declare class Decoder {
   readonly casters: Casters;
-  readonly arrayCasters: Casters;
-  constructor(schemas: runtime.Schema[]);
+  constructor(schemas?: runtime.Schema[]);
   decode<T>(typeName: string, data: unknown): Either<t.Errors, T>;
   decodeArray<T>(typeName: string, data: unknown): Either<t.Errors, T[]>;
   registerSchema(spec: runtime.Schema): void;
