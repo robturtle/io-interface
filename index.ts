@@ -5,7 +5,9 @@ import { runtime } from 'ts-transformer-interface';
 export { runtime } from 'ts-transformer-interface';
 
 export function schema<T extends object>(): runtime.Schema {
-  throw new Error('will be replaced by transformer');
+  throw new Error(
+    `tsc did not expand this macro! Ensure you setup tsconfig plugins section correctly!`,
+  );
 }
 
 export interface Caster<T = any> extends t.Type<T> {}
