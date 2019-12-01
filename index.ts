@@ -2,6 +2,7 @@ import { Either, isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { runtime } from 'ts-transformer-interface';
+import { ICaster } from 'ts-transformer-decoder-cast';
 
 /** @since 1.0.0 */
 export { runtime } from 'ts-transformer-interface';
@@ -65,7 +66,7 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
 });
 
 /** @since 1.0.0 */
-export class Decoder {
+export class Decoder implements ICaster {
   /** @since 1.0.0 */
   readonly casters: Casters = {};
 

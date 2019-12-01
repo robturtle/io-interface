@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { runtime } from 'ts-transformer-interface';
+import { ICaster } from 'ts-transformer-decoder-cast';
 /** @since 1.0.0 */
 export { runtime } from 'ts-transformer-interface';
 /** @since 1.0.2 */
@@ -13,7 +14,7 @@ export interface Casters {
   [type: string]: Caster;
 }
 /** @since 1.0.0 */
-export declare class Decoder {
+export declare class Decoder implements ICaster {
   /** @since 1.0.0 */
   readonly casters: Casters;
   private todos;
