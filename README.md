@@ -106,7 +106,7 @@ We have to manually create a decoder for a class. Luckly the decoder for `Date` 
 ```typescript
 import { DateFromISOString } from 'io-ts-types/lib/DateFromISOString';
 
-const decoder = new Decoder([shema<Order>()], {
+const decoder = new Decoder([schema<Order>()], {
   Date: DateFromISOString,
 });
 ```
