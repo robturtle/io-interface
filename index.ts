@@ -42,6 +42,8 @@ const ParameterizedTypeC: t.Type<runtime.ParameterizedType> = t.type({
 export class Decoder {
   readonly casters: Casters = {};
 
+  private _modelNames?: string[];
+
   constructor(schemas: runtime.Schema[] = []) {
     schemas.forEach(s => this.registerSchema(s));
   }
@@ -51,7 +53,11 @@ export class Decoder {
   }
 
   modelNames(): string[] {
-    return Object.keys(this.casters);
+    if (this._modelNames) {
+      return this._modelNames;
+    }
+    this._modelNames = Object.keys(this.casters);
+    return this._modelNames;
   }
 
   decode<T>(typeName: string, data: unknown): Either<t.Errors, T> {
@@ -64,6 +70,9 @@ export class Decoder {
 
   registerSchema(spec: runtime.Schema) {
     const name = spec.name;
+    if (name in this.modelNames()) {
+      throw new Error(`type '${name}' already registered`);
+    }
     const required = spec.props.filter(p => !p.optional);
     const optional = spec.props.filter(p => p.optional);
     if (required.length > 0 && optional.length > 0) {
