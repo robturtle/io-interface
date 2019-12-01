@@ -60,7 +60,7 @@ Also
 
 1. The fields in the interface CAN be marked optional.
 2. Generic types are NOT supported.
-3. Union types are NOT supported (Thinking this as an approach to enforce the certainty of an API).
+3. Union types are NOT supported yet (PR, feature request welcomed if you really need this to work with a bad-designed API)
 4. `null`, `any`, `unknown` are illegal.
 5. Recursive types are NOT supported.
 
