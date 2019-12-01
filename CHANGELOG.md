@@ -1,3 +1,7 @@
+## 1.3.0
+
+- add `classCasters` to constructor
+
 ## 1.2.0
 
 - integrate with `requestAndCast<T>(args)` macro
