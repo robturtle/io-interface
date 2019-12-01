@@ -42,9 +42,11 @@ const ParameterizedTypeC: t.Type<runtime.ParameterizedType> = t.type({
 export class Decoder {
   readonly casters: Casters = {};
 
+  private todos: { [name: string]: boolean } = {};
   private resolves: { [name: string]: boolean } = {};
 
   constructor(schemas: runtime.Schema[] = []) {
+    schemas.forEach(s => (this.todos[s.name] = true));
     schemas.forEach(s => this.registerSchema(s));
   }
 
@@ -85,6 +87,10 @@ export class Decoder {
     if (!(typeName in this.casters)) {
       if (this.resolves[typeName] === false) {
         throw new Error(`recursive definition not supported`);
+      } else if (this.todos[typeName]) {
+        throw new Error(
+          `depends on ${typeName} but it's not registered yet. (try to move '${typeName}' before this type)`,
+        );
       } else {
         throw new Error(`decoder for '${typeName}' not registered`);
       }

@@ -94,6 +94,30 @@ const TreeSchema = schema<Tree>();
 
 try {
   new Decoder([TreeSchema]);
+  console.log('RECURSIVE DETECTION NOT WORKING!');
 } catch (e) {
   console.log('recursive detection:', e.message);
+}
+
+// topological out of order
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+interface Order {
+  price: number;
+  position: LatLng;
+}
+
+const schemasOutOfOrder = [schema<Order>(), schema<LatLng>()];
+
+try {
+  new Decoder(schemasOutOfOrder);
+  console.log('TOPOLOGICAL OUT OF ORDER NOT WORKING!');
+} catch (e) {
+  if (!(e as Error).message.match(/depends/)) {
+    console.log('TOPOLOGICAL OUT OF ORDER NOT WORKING!');
+  }
+  console.log('topological out of order:', e.message);
 }
