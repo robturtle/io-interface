@@ -199,11 +199,13 @@ type DecoderCallback<T> = (
 ) => T | undefined;
 
 class ApiService {
+  // use it in your codebase
   requestAndCast<T>(options: ApiOptions): T {
     throw new Error(`macro failed to expand, 
     check your tsconfig and ensure "io-interface/transform-request" is enabled`);
   }
 
+  // do not call it directly, transformer will call it
   request<T>(
     options: ApiOptions,
     cb: (c: Decoder, data: unknown, e?: DecoderCallback<T>) => T | undefined,
