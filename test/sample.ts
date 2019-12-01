@@ -28,8 +28,8 @@ const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>(
 
 const dec = new Decoder(schemas);
 
-function test(name: string, type: string, json: unknown) {
-  const res = dec.decode(type, json);
+function test<T>(name: string, type: string, json: unknown) {
+  const res = dec.decode<T>(type, json);
   if (isRight(res)) {
     const equals = JSON.stringify(res.right) === JSON.stringify(json);
     if (equals) {
@@ -57,7 +57,7 @@ const good1: User = {
     value: 'marker',
   },
 };
-test('good1', 'User', good1);
+test<User>('good1', 'User', good1);
 
 const bad1 = {
   name: 123,
@@ -65,7 +65,7 @@ const bad1 = {
   houses: '1111 Mission St',
   location: '0/37',
 };
-test('error example:', 'User', bad1);
+test<User>('error example:', 'User', bad1);
 
 // name conflicts
 const duplicatedSchema: runtime.Schema = {
@@ -151,7 +151,7 @@ const serviceOrder: ServiceOrder = {
   position: { lat: 0, lng: 0 },
   price: 3,
 };
-test('extended interface', 'ServiceOrder', serviceOrder);
+test<ServiceOrder>('extended interface', 'ServiceOrder', serviceOrder);
 
 // special types
 interface WithNull {
