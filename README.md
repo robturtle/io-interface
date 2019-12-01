@@ -160,6 +160,57 @@ readonly schemas = [schema<Todo>()];
 
 As you can see from the signature `decode<Todo>('Todo', json)`, `Todo` repeats twice. But for native TypeScript this is needed because the type parameter is for static environment and method parameter is for runtime environment. I don't find a very good solution here but I created a [specific TypeScript transformer](https://www.npmjs.com/package/ts-transformer-decoder-cast) to expand a macro such as `decode<Todo>(json)` to `decode<Todo>('Todo', json)`. Since TypeScript will never populate the interface information to runtime so I guess this would be the easiest way to reduce the duplication.
 
+Because I didn't find any decent macro system for TypeScript so this macro implementation is very specific and not configurable. It replaces:
+
+```typescript
+requestAndCast<User>(options);
+```
+
+To:
+
+```typescript
+request(options, (decoder, data, onError) => decoder.decode('User', data, onError));
+```
+
+So if you want use this ensure you declares such methods.
+
+To enable this, install `transform-request` to tsconfig plugins:
+
+```json
+{
+  "compilerOptions": {
+    "plugins": [
+      { "transform": "io-interface/transform-interface" },
+      { "transform": "io-interface/transform-request" } // <--- add this
+    ]
+  }
+}
+```
+
+And here's an example implementation.
+
+```typescript
+type DecoderCallback<T> = (
+  c: Decoder,
+  data: unknown,
+  onError: (e: string[]) => void,
+) => T | undefined;
+
+class ApiService {
+  requestAndCast<T>(options: ApiOptions): T {
+    throw new Error(`macro failed to expand, 
+    check your tsconfig and ensure "io-interface/transform-request" is enabled`);
+  }
+
+  request<T>(
+    options: ApiOptions,
+    cb: (c: Decoder, data: unknown, e?: DecoderCallback<T>) => T | undefined,
+  ) {
+    // do the real work here
+  }
+}
+```
+
 ## Error handling
 
 ![image](https://user-images.githubusercontent.com/3524125/69911276-eb973480-13cd-11ea-89a2-31692ba81702.png)
