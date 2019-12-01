@@ -64,9 +64,6 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
   props: t.array(PropertyC),
 });
 
-/** @since 1.1.0 */
-export type ErrorHandler = (result: string[]) => void;
-
 /** @since 1.0.0 */
 export class Decoder {
   /** @since 1.0.0 */
@@ -81,16 +78,23 @@ export class Decoder {
   }
 
   /** @since 1.1.0 */
-  decode<T>(typeName: string, data: unknown, onError?: ErrorHandler): T | undefined {
+  decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined {
     return this.processResult(this.getCaster<T>(typeName).decode(data), onError);
   }
 
   /** @since 1.1.0 */
-  decodeArray<T>(typeName: string, data: unknown, onError?: ErrorHandler): T[] | undefined {
+  decodeArray<T>(
+    typeName: string,
+    data: unknown,
+    onError?: (errors: string[]) => void,
+  ): T[] | undefined {
     return this.processResult(this.getArrayCaster<T>(typeName).decode(data), onError);
   }
 
-  private processResult<T>(result: Either<t.Errors, T>, onError?: ErrorHandler): T | undefined {
+  private processResult<T>(
+    result: Either<t.Errors, T>,
+    onError?: (errors: string[]) => void,
+  ): T | undefined {
     if (isRight(result)) {
       return result.right;
     } else if (onError) {

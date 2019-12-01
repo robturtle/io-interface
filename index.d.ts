@@ -1,4 +1,3 @@
-import { Either } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { runtime } from 'ts-transformer-interface';
 /** @since 1.0.0 */
@@ -20,12 +19,15 @@ export declare class Decoder {
   private todos;
   private resolves;
   constructor(schemas?: runtime.Schema[]);
-  /** @since 1.0.0 */
-  static errors(result: Either<t.Errors, any>): string[];
-  /** @since 1.0.0 */
-  decode<T>(typeName: string, data: unknown): Either<t.Errors, T>;
-  /** @since 1.0.0 */
-  decodeArray<T>(typeName: string, data: unknown): Either<t.Errors, T[]>;
+  /** @since 1.1.0 */
+  decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined;
+  /** @since 1.1.0 */
+  decodeArray<T>(
+    typeName: string,
+    data: unknown,
+    onError?: (errors: string[]) => void,
+  ): T[] | undefined;
+  private processResult;
   /** @since 1.0.0 */
   registerSchema(spec: runtime.Schema): void;
   private buildCaster;
@@ -34,4 +36,5 @@ export declare class Decoder {
   private getArrayCaster;
   private buildCasters;
   private buildTypeCaster;
+  private errors;
 }
