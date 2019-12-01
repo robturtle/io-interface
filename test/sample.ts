@@ -1,4 +1,4 @@
-import { schema, Decoder } from '../index';
+import { schema, Decoder, runtime } from '../index';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
@@ -64,3 +64,26 @@ const bad1 = {
   location: '0/37',
 };
 test('bad1', bad1);
+
+// name conflicts
+const duplicatedSchema: runtime.Schema = {
+  name: 'User',
+  props: [
+    {
+      name: 'value',
+      type: 'string',
+      optional: false,
+    },
+  ],
+};
+
+let notWorking = false;
+try {
+  new Decoder([...schemas, duplicatedSchema]);
+  notWorking = true;
+} catch (e) {
+  console.log('type name conflict:', e.message);
+}
+if (notWorking) {
+  throw new Error('name conflicts not caught');
+}

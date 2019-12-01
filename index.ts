@@ -42,7 +42,7 @@ const ParameterizedTypeC: t.Type<runtime.ParameterizedType> = t.type({
 export class Decoder {
   readonly casters: Casters = {};
 
-  private modelNames: string[] = [];
+  private resolves: { [name: string]: boolean } = {};
 
   constructor(schemas: runtime.Schema[] = []) {
     schemas.forEach(s => this.registerSchema(s));
@@ -62,10 +62,10 @@ export class Decoder {
 
   registerSchema(spec: runtime.Schema) {
     const name = spec.name;
-    if (name in this.modelNames) {
+    if (name in this.resolves) {
       throw new Error(`type '${name}' already registered`);
     }
-    this.modelNames.push(name);
+    this.resolves[name] = false;
     const required = spec.props.filter(p => !p.optional);
     const optional = spec.props.filter(p => p.optional);
     if (required.length > 0 && optional.length > 0) {
@@ -78,11 +78,12 @@ export class Decoder {
     } else {
       this.casters[name] = t.partial(this.buildCasters(name, optional), name);
     }
+    this.resolves[name] = true;
   }
 
   private getCaster<T>(typeName: string): Caster<T> {
     if (!(typeName in this.casters)) {
-      if (typeName in this.modelNames) {
+      if (typeName in this.resolves) {
         throw new Error(`recursive definition not supported (found in type '${typeName}')`);
       } else {
         throw new Error(`decoder for '${typeName}' not registered`);
@@ -93,7 +94,7 @@ export class Decoder {
 
   private getArrayCaster<T>(typeName: string): Caster<T[]> {
     if (!(typeName in this.casters)) {
-      if (typeName in this.modelNames) {
+      if (this.resolves[typeName] === false) {
         throw new Error(`recursive definition not supported (found in type '${typeName}')`);
       } else {
         throw new Error(`decoder for '${typeName}[]' not registered`);
