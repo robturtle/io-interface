@@ -174,6 +174,8 @@ request(...args, (decoder, data, onError) => decoder.decode('User', data, onErro
 
 So if you want use this ensure you declares such methods.
 
+### Installation
+
 To enable this, install `transform-request` to tsconfig plugins:
 
 ```json
