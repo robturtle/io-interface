@@ -77,13 +77,23 @@ const duplicatedSchema: runtime.Schema = {
   ],
 };
 
-let notWorking = false;
 try {
   new Decoder([...schemas, duplicatedSchema]);
-  notWorking = true;
+  console.log('NAME CONFLICT NOT WORKING!');
 } catch (e) {
   console.log('type name conflict:', e.message);
 }
-if (notWorking) {
-  throw new Error('name conflicts not caught');
+
+// recursive interface
+interface Tree {
+  value: number;
+  left?: Tree;
+  right?: Tree;
+}
+const TreeSchema = schema<Tree>();
+
+try {
+  new Decoder([TreeSchema]);
+} catch (e) {
+  console.log('recursive detection:', e.message);
 }

@@ -84,7 +84,7 @@ export class Decoder {
   private getCaster<T>(typeName: string): Caster<T> {
     if (!(typeName in this.casters)) {
       if (typeName in this.resolves) {
-        throw new Error(`recursive definition not supported (found in type '${typeName}')`);
+        throw new Error(`recursive definition not supported`);
       } else {
         throw new Error(`decoder for '${typeName}' not registered`);
       }
@@ -95,7 +95,7 @@ export class Decoder {
   private getArrayCaster<T>(typeName: string): Caster<T[]> {
     if (!(typeName in this.casters)) {
       if (this.resolves[typeName] === false) {
-        throw new Error(`recursive definition not supported (found in type '${typeName}')`);
+        throw new Error(`recursive definition not supported`);
       } else {
         throw new Error(`decoder for '${typeName}[]' not registered`);
       }
