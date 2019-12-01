@@ -5,14 +5,17 @@ import { runtime } from 'ts-transformer-interface';
 
 export { runtime } from 'ts-transformer-interface';
 
+/** @since 1.0.0 */
 export function schema<T extends object>(): runtime.Schema {
   throw new Error(
     `tsc did not expand this macro! Ensure you setup tsconfig plugins section correctly!`,
   );
 }
 
+/** @since 1.0.0 */
 export interface Caster<T = any> extends t.Type<T> {}
 
+/** @since 1.0.0 */
 export interface Casters {
   [type: string]: Caster;
 }
@@ -57,7 +60,9 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
   props: t.array(PropertyC),
 });
 
+/** @since 1.0.0 */
 export class Decoder {
+  /** @since 1.0.0 */
   readonly casters: Casters = {};
 
   private todos: { [name: string]: boolean } = {};
@@ -68,18 +73,22 @@ export class Decoder {
     schemas.forEach(s => this.registerSchema(s));
   }
 
+  /** @since 1.0.0 */
   static errors(result: Either<t.Errors, any>): string[] {
     return PathReporter.report(result);
   }
 
+  /** @since 1.0.0 */
   decode<T>(typeName: string, data: unknown): Either<t.Errors, T> {
     return this.getCaster<T>(typeName).decode(data);
   }
 
+  /** @since 1.0.0 */
   decodeArray<T>(typeName: string, data: unknown): Either<t.Errors, T[]> {
     return this.getArrayCaster<T>(typeName).decode(data);
   }
 
+  /** @since 1.0.0 */
   registerSchema(spec: runtime.Schema) {
     const name = spec.name;
     if (name in this.resolves) {
