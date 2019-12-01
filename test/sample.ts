@@ -1,4 +1,4 @@
-import { schema } from '../index';
+import { schema } from '../index.d';
 
 interface Location {
   lat: number;

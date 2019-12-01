@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import transformer from '../../transformer';
+import transformer from '../../transform-interface';
 
 export function compile(filePaths: string[], writeFileCallback?: ts.WriteFileCallback): void {
   const program = ts.createProgram(filePaths, {

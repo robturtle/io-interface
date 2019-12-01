@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "fp-ts": "^2.2.0",
-    "ts-transformer-interface": "^1.4.2"
+    "ts-transformer-interface": "^1.4.3"
   },
   "peerDependencies": {
     "typescript": ">=2.4.1",
