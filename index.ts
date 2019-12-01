@@ -7,9 +7,6 @@ import { ICaster } from 'ts-transformer-decoder-cast';
 /** @since 1.0.0 */
 export { runtime } from 'ts-transformer-interface';
 
-/** @since 1.0.2 */
-export { isRight } from 'fp-ts/lib/Either';
-
 /** @since 1.0.0 */
 export function schema<T extends object>(): runtime.Schema {
   throw new Error(
