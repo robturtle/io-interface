@@ -1,4 +1,4 @@
-import { Either } from 'fp-ts/lib/Either';
+import { Either, isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { runtime } from 'ts-transformer-interface';
@@ -64,6 +64,9 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
   props: t.array(PropertyC),
 });
 
+/** @since 1.1.0 */
+export type ErrorHandler = (result: string[]) => void;
+
 /** @since 1.0.0 */
 export class Decoder {
   /** @since 1.0.0 */
@@ -77,19 +80,22 @@ export class Decoder {
     schemas.forEach(s => this.registerSchema(s));
   }
 
-  /** @since 1.0.0 */
-  static errors(result: Either<t.Errors, any>): string[] {
-    return PathReporter.report(result);
+  /** @since 1.1.0 */
+  decode<T>(typeName: string, data: unknown, onError?: ErrorHandler): T | undefined {
+    return this.processResult(this.getCaster<T>(typeName).decode(data), onError);
   }
 
-  /** @since 1.0.0 */
-  decode<T>(typeName: string, data: unknown): Either<t.Errors, T> {
-    return this.getCaster<T>(typeName).decode(data);
+  /** @since 1.1.0 */
+  decodeArray<T>(typeName: string, data: unknown, onError?: ErrorHandler): T[] | undefined {
+    return this.processResult(this.getArrayCaster<T>(typeName).decode(data), onError);
   }
 
-  /** @since 1.0.0 */
-  decodeArray<T>(typeName: string, data: unknown): Either<t.Errors, T[]> {
-    return this.getArrayCaster<T>(typeName).decode(data);
+  private processResult<T>(result: Either<t.Errors, T>, onError?: ErrorHandler): T | undefined {
+    if (isRight(result)) {
+      return result.right;
+    } else if (onError) {
+      onError(this.errors(result));
+    }
   }
 
   /** @since 1.0.0 */
@@ -178,5 +184,9 @@ export class Decoder {
       default:
         throw new Error(`illegal decoder type ${JSON.stringify(type)}`);
     }
+  }
+
+  private errors(result: Either<t.Errors, any>): string[] {
+    return PathReporter.report(result);
   }
 }

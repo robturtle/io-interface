@@ -1,3 +1,7 @@
+## 1.1.0
+
+- decode() decodeArray() now return `T | undefined` and accepts optional `ErrorHandler`
+
 ## 1.0.0
 
 - build io-ts codec solution from runtime.Schema, i.e. metadata of (subset of) native TypeScript interface

@@ -29,18 +29,16 @@ const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>(
 const dec = new Decoder(schemas);
 
 function test<T>(name: string, type: string, json: unknown) {
-  const res = dec.decode<T>(type, json);
-  if (isRight(res)) {
-    const equals = JSON.stringify(res.right) === JSON.stringify(json);
+  const res = dec.decode<T>(type, json, errors => console.error(name, errors));
+  if (res) {
+    const equals = JSON.stringify(res) === JSON.stringify(json);
     if (equals) {
       console.log(name, 'passed');
     } else {
       console.log('DECODER NOT CAST CORRECTLY!');
       console.log('expected:', json);
-      console.log('actual', res.right);
+      console.log('actual', res);
     }
-  } else {
-    console.log(name, PathReporter.report(res));
   }
   console.log('-'.repeat(40));
 }
