@@ -191,3 +191,47 @@ const good2: WithLiteralType = {
 };
 
 test('literal type', 'WithLiteralType', good2);
+
+// requestAndCast macro
+type DecoderCallback<T> = (
+  dec: Decoder,
+  data: unknown,
+  onError?: (errors: string[]) => void,
+) => T | undefined;
+
+class ApiService {
+  request<T>(url: any, cb: DecoderCallback<T>) {
+    const data = url; // mock data fetching
+    const converted = cb(dec, data, errors => {
+      console.error('decoder error caught', errors);
+    });
+    return converted;
+  }
+
+  requestAndCast<T>(url: any): T {
+    throw new Error('test compiler should replace this method call to request()');
+  }
+}
+
+const api = new ApiService();
+
+const user: User = api.requestAndCast<User>(good1);
+const eq3 = JSON.stringify(user) === JSON.stringify(good1);
+if (eq3) {
+  console.log('macro expand decode: passed');
+} else {
+  console.error('macro expand decode NOT WORKING!');
+}
+
+const users: User[] = api.requestAndCast<User[]>([good1]);
+const eq4 = JSON.stringify(users) === JSON.stringify([good1]);
+if (eq4) {
+  console.log('macro expand decodeArray: passed');
+} else {
+  console.error('macro expand decodeArray NOT WORKING!');
+}
+
+const badUser: User = api.requestAndCast<User>({ statusCode: 401 });
+if (badUser === undefined) {
+  console.log('error handling: passed');
+}
