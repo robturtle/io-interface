@@ -1,5 +1,6 @@
 import * as ts from 'typescript';
 import transformInterface from '../../transform-interface';
+import transformRequest from '../../transform-request';
 
 export function compile(filePaths: string[], writeFileCallback?: ts.WriteFileCallback): void {
   const program = ts.createProgram(filePaths, {
@@ -9,7 +10,7 @@ export function compile(filePaths: string[], writeFileCallback?: ts.WriteFileCal
     target: ts.ScriptTarget.ES5,
   });
   const transformers: ts.CustomTransformers = {
-    before: [transformInterface(program)],
+    before: [transformInterface(program), transformRequest(program)],
     after: [],
   };
   const { emitSkipped, diagnostics } = program.emit(
