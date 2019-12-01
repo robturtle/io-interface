@@ -50,6 +50,10 @@ export class Decoder {
     return PathReporter.report(result);
   }
 
+  modelNames(): string[] {
+    return Object.keys(this.casters);
+  }
+
   decode<T>(typeName: string, data: unknown): Either<t.Errors, T> {
     return this.getCaster<T>(typeName).decode(data);
   }
