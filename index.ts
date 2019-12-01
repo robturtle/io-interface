@@ -1,7 +1,7 @@
-import { Either, isRight } from 'fp-ts/lib/Either';
+import { Either } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
-import { runtime } from 'ts-transformer-interface';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import { runtime } from 'ts-transformer-interface';
 
 export { runtime } from 'ts-transformer-interface';
 
