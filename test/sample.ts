@@ -42,6 +42,7 @@ function test(name: string, type: string, json: unknown) {
   } else {
     console.log(name, PathReporter.report(res));
   }
+  console.log('-'.repeat(40));
 }
 
 const good1: User = {
@@ -84,6 +85,7 @@ try {
 } catch (e) {
   console.log('type name conflict:', e.message);
 }
+console.log('-'.repeat(40));
 
 // recursive interface
 interface Tree {
@@ -99,6 +101,7 @@ try {
 } catch (e) {
   console.log('recursive detection:', e.message);
 }
+console.log('-'.repeat(40));
 
 // topological out of order
 interface LatLng {
@@ -122,6 +125,7 @@ try {
   }
   console.log('topological out of order:', e.message);
 }
+console.log('-'.repeat(40));
 
 // empty interface
 interface Nothing {}
@@ -136,6 +140,7 @@ try {
   }
   console.log('empty detection:', e.message);
 }
+console.log('-'.repeat(40));
 
 // extends interface
 interface ServiceOrder extends Order {}
@@ -168,4 +173,5 @@ interface WithUnknown {
   } catch (e) {
     console.log('special types: ', e.message);
   }
+  console.log('-'.repeat(40));
 });
