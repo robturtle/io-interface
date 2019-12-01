@@ -70,7 +70,9 @@ export class Decoder implements ICaster {
   private todos: { [name: string]: boolean } = {};
   private resolves: { [name: string]: boolean } = {};
 
-  constructor(schemas: runtime.Schema[] = []) {
+  /** @since 1.3.0 */
+  constructor(schemas: runtime.Schema[] = [], classCasters: Casters = {}) {
+    Object.assign(this.casters, classCasters);
     schemas.forEach(s => (this.todos[s.name] = true));
     schemas.forEach(s => this.registerSchema(s));
   }
