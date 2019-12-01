@@ -42,10 +42,9 @@ const ParameterizedTypeC: t.Type<runtime.ParameterizedType> = t.type({
 export class Decoder {
   readonly casters: Casters = {};
 
-  private modelNames: string[];
+  private modelNames: string[] = [];
 
   constructor(schemas: runtime.Schema[] = []) {
-    this.modelNames = schemas.map(s => s.name);
     schemas.forEach(s => this.registerSchema(s));
   }
 
