@@ -17,7 +17,9 @@
   ],
   "files": [
     "index.js",
-    "index.d.ts"
+    "index.d.ts",
+    "transform-interface.ts",
+    "runtime-schema.ts"
   ],
   "author": "Yang Liu",
   "license": "MIT",
