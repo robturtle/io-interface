@@ -1,10 +1,54 @@
 # io-interface
 
-**TODO**: description
+`io-interface` auto generates runtime validation solutions from TypeScript native interfaces. It's main purpose is to validate JSON data from a web API but you can use it to validate any external data.
 
-You can check out [this repo](https://github.com/robturtle/io-interface-demo) as a demo project.
+```typescript
+// src/app/models/user.ts
+// Stap 1. define an interface
+export interface User {
+  name: string;
+  title?: string;
+  age: number;
+  recentOrders: Order[];
+}
 
-## Setup ts-patch
+// src/app/services/decoder.service.ts
+// Step 2. add `schema<User>()` to the manifest to register
+import { schema, Decoder } from 'io-interface';
+
+const schemas = [
+  //...
+  schema<User>(),
+];
+
+export const decoder = new Decoder(schemas);
+
+// src/app/users/user.service.ts
+// Step 3. use `decode()` and `decodeArray()` to do the validation/conversion.
+class UserService {
+  async getUser(id): User | undefined {
+    const json = await fetch('GET', `/users/${id}`);
+    return decoder.decode<User>('User', json, console.error);
+  }
+
+  async getUsers(): User[] | undefined {
+    const json = await fetch('GET', '/users');
+    return decoder.decodeArray<User>('User', json, console.error);
+  }
+}
+```
+
+## Motivation
+
+Validating data coming from an external system is always good. Image you found a powerful runtime validation library [io-ts](https://github.com/gcanti/io-ts) and want to adopt it to your project, but the concern is all the team members have to learn this new library and understand how it works. This would slow down the developing pace in many cases we don't want this slowdown.
+
+So here comes the encapsulation. The goal is the rest of the team need to learn nearly nothing to use this facility and the minimum code changes are required to adopt it. For other developers they can still simply use a native TypeScript interface to represent the data model from web API. And use one-liner to auto-generate the validation solution.
+
+You can check out [this Angular repo](https://github.com/robturtle/io-interface-demo) as a demo project.
+
+## Installation
+
+### Setup ts-patch
 
 1. `npm install -D ts-patch`
 
@@ -49,7 +93,7 @@ You should see the console message like this:
 
 ![image](https://user-images.githubusercontent.com/3524125/69911372-66148400-13cf-11ea-84f7-b9a7c84f79ee.png)
 
-## Create a DecoderService
+### [Angular] A DecoderService
 
 The example code is as follows.
 
@@ -76,6 +120,8 @@ export class DecoderService {
   }
 }
 ```
+
+Just replace `console.error` with a real error handler in your project.
 
 ## Daily usage
 
@@ -112,7 +158,7 @@ readonly schemas = [schema<Todo>()];
 
 ## Can we do better?
 
-As you can see from the signature `decode<Todo>('Todo', json)`, `Todo` repeats twice. But for native TypeScript this is needed because the type parameter is for static environment and method parameter is for runtime environment. I don't find a very good solution here but I created a specific TypeScript transformer to expand a macro such as `decode<Todo>(json)` to `decode<Todo>('Todo', json)`. The solution will not shared here but you get the idea. Since TypeScript will never populate the interface information to runtime so I guess this would be the easiest way to reduce the duplication.
+As you can see from the signature `decode<Todo>('Todo', json)`, `Todo` repeats twice. But for native TypeScript this is needed because the type parameter is for static environment and method parameter is for runtime environment. I don't find a very good solution here but I created a [specific TypeScript transformer](https://www.npmjs.com/package/ts-transformer-decoder-cast) to expand a macro such as `decode<Todo>(json)` to `decode<Todo>('Todo', json)`. Since TypeScript will never populate the interface information to runtime so I guess this would be the easiest way to reduce the duplication.
 
 ## Error handling
 
