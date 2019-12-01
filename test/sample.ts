@@ -1,4 +1,5 @@
 import { Decoder, runtime, schema } from '../index';
+import { DateFromISOString } from 'io-ts-types/lib/DateFromISOString';
 
 interface Location {
   lat: number;
@@ -24,7 +25,11 @@ interface User {
 
 const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>()];
 
-const dec = new Decoder(schemas);
+const classCasters = {
+  Date: DateFromISOString,
+};
+
+const dec = new Decoder(schemas, classCasters);
 
 function test<T>(name: string, type: string, json: unknown) {
   const res = dec.decode<T>(type, json, errors => console.error(name, errors));
@@ -235,3 +240,11 @@ const badUser: User = api.requestAndCast<User>({ statusCode: 401 });
 if (badUser === undefined) {
   console.log('error handling: passed');
 }
+console.log('-'.repeat(40));
+
+// class casters
+interface Shift {
+  clockIn: Date;
+}
+dec.registerSchema(schema<Shift>());
+test('class casters', 'Shift', { clockIn: new Date().toISOString() });
