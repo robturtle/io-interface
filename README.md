@@ -25,17 +25,8 @@ export const decoder = new Decoder(schemas);
 
 // src/app/users/user.service.ts
 // Step 3. use `decode()` and `decodeArray()` to do the validation/conversion.
-class UserService {
-  async getUser(id): User | undefined {
-    const json = await fetch('GET', `/users/${id}`);
-    return decoder.decode<User>('User', json, console.error);
-  }
-
-  async getUsers(): User[] | undefined {
-    const json = await fetch('GET', '/users');
-    return decoder.decodeArray<User>('User', json, console.error);
-  }
-}
+const user: User | undefined = decoder.decode<User>('User', json, console.error);
+const users: User[] | undefined = decoder.decodeArray<User>('User', json, console.error);
 ```
 
 ## Motivation
