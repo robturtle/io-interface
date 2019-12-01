@@ -121,3 +121,17 @@ try {
   }
   console.log('topological out of order:', e.message);
 }
+
+// empty interface
+interface Nothing {}
+const nothingSchema = schema<Nothing>();
+
+try {
+  new Decoder([nothingSchema]);
+  console.log('EMPTY DETECTION NOT WORKING!');
+} catch (e) {
+  if (!(e as Error).message.match(/empty/)) {
+    console.log('EMPTY DETECTION NOT WORKING!');
+  }
+  console.log('empty detection:', e.message);
+}

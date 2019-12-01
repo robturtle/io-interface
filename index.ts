@@ -77,8 +77,10 @@ export class Decoder {
       );
     } else if (required.length > 0) {
       this.casters[name] = t.type(this.buildCasters(name, required), name);
-    } else {
+    } else if (optional.length > 0) {
       this.casters[name] = t.partial(this.buildCasters(name, optional), name);
+    } else {
+      throw new Error(`type '${name}' is an empty interface which is not supported`);
     }
     this.resolves[name] = true;
   }
