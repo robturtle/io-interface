@@ -24,12 +24,6 @@ interface User {
   marker: google.maps.Marker; // scoped type
 }
 
-interface Special {
-  null: null;
-  any: any;
-  unknown: unknown;
-}
-
 const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>()];
 
 const dec = new Decoder(schemas);
@@ -153,3 +147,25 @@ const serviceOrder: ServiceOrder = {
   price: 3,
 };
 test('extended interface', 'ServiceOrder', serviceOrder);
+
+// special types
+interface WithNull {
+  null: null;
+}
+
+interface WithAny {
+  any: any;
+}
+
+interface WithUnknown {
+  unknown: unknown;
+}
+
+[schema<WithNull>(), schema<WithAny>(), schema<WithUnknown>()].forEach(s => {
+  try {
+    new Decoder([s]);
+    console.log(`SPECIAL DETECTION (${s.name}) NOT WORKING!`);
+  } catch (e) {
+    console.log('special types: ', e.message);
+  }
+});
