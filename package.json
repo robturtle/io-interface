@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "cd test && tsc && node compile && node sample.js",
-    "prepare": "./build.sh"
+    "pretest": "./build.sh",
+    "posttest": "projectz compile"
   },
   "repository": {
     "type": "git",
@@ -51,5 +52,9 @@
   "peerDependencies": {
     "typescript": ">=2.4.1",
     "io-ts": ">=2.0.1"
-  }
+  },
+  "maintainers": [],
+  "contributors": [
+    "Yang Liu (http://medium.com/@yl3710)"
+  ]
 }

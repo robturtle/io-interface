@@ -1,3 +1,9 @@
+<!-- BADGES/ -->
+
+<span class="badge-npmversion"><a href="https://npmjs.org/package/io-interface" title="View this project on NPM"><img src="https://img.shields.io/npm/v/io-interface.svg" alt="NPM version" /></a></span>
+
+<!-- /BADGES -->
+
 # io-interface
 
 `io-interface` auto generates runtime validation solutions from TypeScript native interfaces. It's main purpose is to validate JSON data from a web API but you can use it to validate any external data.
@@ -266,7 +272,7 @@ type DecoderCallback<T> = (
 class ApiService {
   // use it in your codebase
   requestAndCast<T>(options: ApiOptions): T {
-    throw new Error(`macro failed to expand, 
+    throw new Error(`macro failed to expand,
     check your tsconfig and ensure "io-interface/transform-request" is enabled`);
   }
 
