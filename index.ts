@@ -83,7 +83,7 @@ export class Decoder {
 
   private checkRegistry(typeName: string) {
     if (!(typeName in this.casters)) {
-      if (typeName in this.resolves) {
+      if (this.resolves[typeName] === false) {
         throw new Error(`recursive definition not supported`);
       } else {
         throw new Error(`decoder for '${typeName}' not registered`);
