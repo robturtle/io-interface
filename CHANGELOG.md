@@ -1,3 +1,7 @@
+## 1.2.0
+
+- integrate with `requestAndCast<T>(args)` macro
+
 ## 1.1.0
 
 - decode() decodeArray() now return `T | undefined` and accepts optional `ErrorHandler`
