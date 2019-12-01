@@ -4,7 +4,7 @@
 
 ```typescript
 // src/app/models/user.ts
-// Stap 1. define an interface
+// Step 1. define an interface
 export interface User {
   name: string;
   title?: string;
@@ -45,6 +45,79 @@ Validating data coming from an external system is always good. Image you found a
 So here comes the encapsulation. The goal is the rest of the team need to learn nearly nothing to use this facility and the minimum code changes are required to adopt it. For other developers they can still simply use a native TypeScript interface to represent the data model from web API. And use one-liner to auto-generate the validation solution.
 
 You can check out [this Angular repo](https://github.com/robturtle/io-interface-demo) as a demo project.
+
+## Limitations
+
+Since its main purpose is for JSON validation, only a subset of interface syntax is supported here. The fields of an interface must of type:
+
+1. Primitive types: `number`, `string`, `boolean`
+2. Other acceptable interfaces
+3. Classes
+4. Literal types (i.e. `interface Address { pos: { lat: number; lng: number; } }`, here `Address.pos` is a literal type)
+5. Array type of 1-4
+
+Also
+
+1. The fields in the interface can be marked optional
+2. Generic types are NOT supported
+3. Union types are NOT supported (Thinking this as an approach to enforce the certainty of an API)
+4. `null`, `any`, `unknown` are illegal.
+
+### You need declare schemas in topological order
+
+Right now there's no depedency resolver implemented. So for example you have these interfaces:
+
+```typescript
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+interface Order {
+  price: number;
+  pos: LatLng;
+}
+```
+
+You must declare `LatLng`'s schema before `Order`:
+
+```typescript
+const schemas = [
+  //...
+  schema<LatLng>(), // MUST come first
+  schema<Order>(),
+];
+```
+
+But don't worry to much about this, if you declare them in a wrong order, you will receive a error from the library.
+
+### Assign decoders to classes
+
+It's very often we're passing `Date` in JSON, and `Date` is a class instead of an interface in TypeScript.
+
+```typescript
+interface Order {
+  date: Date;
+}
+```
+
+We have to manually create a decoder for a class. Luckly the decoder for `Date` is already implemented in [io-ts-types](https://gcanti.github.io/io-ts-types/modules/DateFromISOString.ts.html). What we need to do is to provide it as classDecoders as the second constructor argument:
+
+```typescript
+import { DateFromISOString } from 'io-ts-types/lib/DateFromISOString';
+
+const decoder = new Decoder([shema<Order>()], {
+  Date: DateFromISOString,
+});
+```
+
+It's equivalent to:
+
+```typescript
+const decoder = new Decoder();
+decoder.casters.Date = DateFromISOString;
+decoder.registerSchema(schema<Order>());
+```
 
 ## Installation
 
