@@ -40,7 +40,7 @@ class UserService {
 
 ## Motivation
 
-Validating data coming from an external system is always good. Image you found a powerful runtime validation library [io-ts](https://github.com/gcanti/io-ts) and want to adopt it to your project, but the concern is all the team members have to learn this new library and understand how it works. This would slow down the developing pace in many cases we don't want this slowdown.
+Validating data coming from an external system is always good. Image you found a powerful runtime validation library [io-ts](https://github.com/gcanti/io-ts) and want to adopt it to your project, but the concern is all the team members have to learn this new library and understand how it works. This would slow down the developing pace. And in many cases we don't want this slowdown.
 
 So here comes the encapsulation. The goal is the rest of the team need to learn nearly nothing to use this facility and the minimum code changes are required to adopt it. For other developers they can still simply use a native TypeScript interface to represent the data model from web API. And use one-liner to auto-generate the validation solution.
 
