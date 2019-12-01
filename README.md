@@ -90,7 +90,7 @@ const schemas = [
 ];
 ```
 
-But don't worry to much about this, if you declare them in a wrong order, you will receive a error from the library.
+But don't worry too much about this, if you declare them in a wrong order, you will receive a error from the library.
 
 ### Assign decoders to classes
 
@@ -230,7 +230,7 @@ readonly schemas = [schema<Todo>()];
   }
 ```
 
-## Can we do better?
+## [Optional] can we DRY it more?
 
 As you can see from the signature `decode<Todo>('Todo', json)`, `Todo` repeats twice. But for native TypeScript this is needed because the type parameter is for static environment and method parameter is for runtime environment. I don't find a very good solution here but I created a [specific TypeScript transformer](https://www.npmjs.com/package/ts-transformer-decoder-cast) to expand a macro such as `decode<Todo>(json)` to `decode<Todo>('Todo', json)`. Since TypeScript will never populate the interface information to runtime so I guess this would be the easiest way to reduce the duplication.
 
