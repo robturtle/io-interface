@@ -1,6 +1,4 @@
-import { schema, Decoder, runtime } from '../index';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
+import { Decoder, runtime, schema } from '../index';
 
 interface Location {
   lat: number;
@@ -59,7 +57,7 @@ test<User>('good1', 'User', good1);
 
 const bad1 = {
   name: 123,
-  Title: 'Life Hacker',
+  title: true,
   houses: '1111 Mission St',
   location: '0/37',
 };
