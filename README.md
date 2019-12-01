@@ -35,14 +35,14 @@ To verify the setup, try compile this file.
 ```typescript
 import { schema } from 'io-interface';
 
-interface order {
+interface Order {
   price: number;
   date: Date;
   note?: string;
   pricelines: number[];
 }
-const orderschema = schema<order>();
-console.log(orderschema);
+const OrderSchema = schema<Order>();
+console.log(OrderSchema);
 ```
 
 You should see the console message like this:
