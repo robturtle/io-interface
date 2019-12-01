@@ -58,10 +58,11 @@ Since its main purpose is for JSON validation, only a subset of interface syntax
 
 Also
 
-1. The fields in the interface can be marked optional
-2. Generic types are NOT supported
-3. Union types are NOT supported (Thinking this as an approach to enforce the certainty of an API)
+1. The fields in the interface CAN be marked optional.
+2. Generic types are NOT supported.
+3. Union types are NOT supported (Thinking this as an approach to enforce the certainty of an API).
 4. `null`, `any`, `unknown` are illegal.
+5. Recursive types are NOT supported.
 
 ### You need declare schemas in topological order
 
