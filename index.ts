@@ -4,6 +4,10 @@ import { runtime } from 'ts-transformer-interface';
 
 export { runtime } from 'ts-transformer-interface';
 
+export function schema<T extends object>(): runtime.Schema {
+  throw new Error('will be replaced by transformer');
+}
+
 export interface Caster<T = any> extends t.Type<T> {}
 
 export interface Casters {
