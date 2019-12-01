@@ -20,6 +20,7 @@
     "index.js",
     "index.d.ts",
     "transform-interface.js",
+    "transform-request.js",
     "runtime-schema.js"
   ],
   "author": "Yang Liu",
