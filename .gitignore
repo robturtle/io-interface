@@ -3,3 +3,5 @@
 node_modules/
 .vscode
 dist/
+runtime-schema.ts
+transform-interface.ts
