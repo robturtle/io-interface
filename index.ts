@@ -68,21 +68,26 @@ export class Decoder {
       throw new Error(`type '${name}' already registered`);
     }
     this.resolves[name] = false;
+    this.casters[name] = this.buildCaster(spec);
+    this.resolves[name] = true;
+  }
+
+  private buildCaster(spec: runtime.Schema): Caster {
+    const name = spec.name;
     const required = spec.props.filter(p => !p.optional);
     const optional = spec.props.filter(p => p.optional);
     if (required.length > 0 && optional.length > 0) {
-      this.casters[name] = t.intersection(
+      return t.intersection(
         [t.type(this.buildCasters(name, required)), t.partial(this.buildCasters(name, optional))],
         name,
       );
     } else if (required.length > 0) {
-      this.casters[name] = t.type(this.buildCasters(name, required), name);
+      return t.type(this.buildCasters(name, required), name);
     } else if (optional.length > 0) {
-      this.casters[name] = t.partial(this.buildCasters(name, optional), name);
+      return t.partial(this.buildCasters(name, optional), name);
     } else {
       throw new Error(`type '${name}' is an empty interface which is not supported`);
     }
-    this.resolves[name] = true;
   }
 
   private checkRegistry(typeName: string) {
@@ -138,7 +143,7 @@ export class Decoder {
       case 'boolean':
         return t.boolean;
       default:
-        throw new Error(`illegal decoder type '${JSON.stringify(type)}'`);
+        throw new Error(`illegal decoder type ${JSON.stringify(type)}`);
     }
   }
 }
