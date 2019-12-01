@@ -163,13 +163,13 @@ As you can see from the signature `decode<Todo>('Todo', json)`, `Todo` repeats t
 Because I didn't find any decent macro system for TypeScript so this macro implementation is very specific and not configurable. It replaces:
 
 ```typescript
-requestAndCast<User>(options);
+requestAndCast<User>(...args);
 ```
 
 To:
 
 ```typescript
-request(options, (decoder, data, onError) => decoder.decode('User', data, onError));
+request(...args, (decoder, data, onError) => decoder.decode('User', data, onError));
 ```
 
 So if you want use this ensure you declares such methods.
