@@ -34,10 +34,17 @@ const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>(
 
 const dec = new Decoder(schemas);
 
-function test(name: string, json: unknown) {
-  const res = dec.decode<User>('User', json);
+function test(name: string, type: string, json: unknown) {
+  const res = dec.decode(type, json);
   if (isRight(res)) {
-    console.log(name, JSON.stringify(res.right) === JSON.stringify(good1));
+    const equals = JSON.stringify(res.right) === JSON.stringify(json);
+    if (equals) {
+      console.log(name, 'passed');
+    } else {
+      console.log('DECODER NOT CAST CORRECTLY!');
+      console.log('expected:', json);
+      console.log('actual', res.right);
+    }
   } else {
     console.log(name, PathReporter.report(res));
   }
@@ -55,7 +62,7 @@ const good1: User = {
     value: 'marker',
   },
 };
-test('good1', good1);
+test('good1', 'User', good1);
 
 const bad1 = {
   name: 123,
@@ -63,7 +70,7 @@ const bad1 = {
   houses: '1111 Mission St',
   location: '0/37',
 };
-test('bad1', bad1);
+test('bad1', 'User', bad1);
 
 // name conflicts
 const duplicatedSchema: runtime.Schema = {
@@ -135,3 +142,14 @@ try {
   }
   console.log('empty detection:', e.message);
 }
+
+// extends interface
+interface ServiceOrder extends Order {}
+dec.registerSchema(schema<LatLng>());
+dec.registerSchema(schema<ServiceOrder>());
+
+const serviceOrder: ServiceOrder = {
+  position: { lat: 0, lng: 0 },
+  price: 3,
+};
+test('extended interface', 'ServiceOrder', serviceOrder);
