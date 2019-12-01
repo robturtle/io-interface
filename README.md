@@ -49,7 +49,7 @@ Since its main purpose is for JSON validation, only a subset of interface syntax
 
 Also
 
-1. The fields in the interface CAN be marked optional.
+1. The fields in the interface CAN be marked as optional.
 2. Generic types are NOT supported.
 3. Union types are NOT supported yet (PR, feature request welcomed if you really need this to work with a bad-designed API)
 4. `null`, `any`, `unknown` are illegal.
@@ -281,5 +281,7 @@ class ApiService {
 ```
 
 ## Error handling
+
+If encoding failed, `decode()` or `decodeArray()` will can an onError callback with signature: `string[] => void` where the argument is an array of error messages. Here's the screenshot of such error messages:
 
 ![image](https://user-images.githubusercontent.com/3524125/69911276-eb973480-13cd-11ea-89a2-31692ba81702.png)
