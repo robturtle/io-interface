@@ -64,7 +64,7 @@ const bad1 = {
   houses: '1111 Mission St',
   location: '0/37',
 };
-test('bad1', 'User', bad1);
+test('error example:', 'User', bad1);
 
 // name conflicts
 const duplicatedSchema: runtime.Schema = {
