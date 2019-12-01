@@ -18,7 +18,15 @@ export interface Casters {
 }
 
 const TypeC: t.Type<runtime.Type> = t.recursion('TypeC', () =>
-  t.union([t.null, t.string, ReferenceTypeC, ArrayTypeC, ParameterizedTypeC, GenericTypeC]),
+  t.union([
+    t.null,
+    t.string,
+    ReferenceTypeC,
+    ArrayTypeC,
+    ParameterizedTypeC,
+    GenericTypeC,
+    LiteralTypeC,
+  ]),
 );
 
 const ReferenceTypeC: t.Type<runtime.ReferenceType> = t.type({
@@ -37,6 +45,16 @@ const GenericTypeC: t.Type<runtime.GenericType> = t.type({
 const ParameterizedTypeC: t.Type<runtime.ParameterizedType> = t.type({
   selfType: t.string,
   typeArgumentType: TypeC,
+});
+
+const PropertyC: t.Type<runtime.Property> = t.type({
+  name: t.string,
+  type: TypeC,
+  optional: t.boolean,
+});
+
+const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
+  props: t.array(PropertyC),
 });
 
 export class Decoder {
@@ -68,25 +86,24 @@ export class Decoder {
       throw new Error(`type '${name}' already registered`);
     }
     this.resolves[name] = false;
-    this.casters[name] = this.buildCaster(spec);
+    this.casters[name] = this.buildCaster(spec.props, name);
     this.resolves[name] = true;
   }
 
-  private buildCaster(spec: runtime.Schema): Caster {
-    const name = spec.name;
-    const required = spec.props.filter(p => !p.optional);
-    const optional = spec.props.filter(p => p.optional);
+  private buildCaster(props: runtime.Property[], name?: string): Caster {
+    const required = props.filter(p => !p.optional);
+    const optional = props.filter(p => p.optional);
     if (required.length > 0 && optional.length > 0) {
       return t.intersection(
-        [t.type(this.buildCasters(name, required)), t.partial(this.buildCasters(name, optional))],
+        [t.type(this.buildCasters(required, name)), t.partial(this.buildCasters(optional, name))],
         name,
       );
     } else if (required.length > 0) {
-      return t.type(this.buildCasters(name, required), name);
+      return t.type(this.buildCasters(required, name), name);
     } else if (optional.length > 0) {
-      return t.partial(this.buildCasters(name, optional), name);
+      return t.partial(this.buildCasters(optional, name), name);
     } else {
-      throw new Error(`type '${name}' is an empty interface which is not supported`);
+      throw new Error(`type '${name || '<LITERAL>'}' is an empty interface which is not supported`);
     }
   }
 
@@ -114,14 +131,14 @@ export class Decoder {
     return t.array(this.casters[typeName]);
   }
 
-  private buildCasters(name: string, props: runtime.Property[]): Casters {
+  private buildCasters(props: runtime.Property[], name?: string): Casters {
     const casters: Casters = {};
     props.forEach(p => {
       let caster;
       try {
         caster = this.buildTypeCaster(p.type);
       } catch (e) {
-        throw new Error(`${name}.${p.name}: ${e.message}`);
+        throw new Error(`${name || '<LITERAL>'}.${p.name}: ${e.message}`);
       }
       casters[p.name] = caster;
     });
