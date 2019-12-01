@@ -175,3 +175,23 @@ interface WithUnknown {
   }
   console.log('-'.repeat(40));
 });
+
+// literal type
+interface WithLiteralType {
+  price: number;
+  position: {
+    lat: number;
+    lng: number;
+  };
+}
+const withLiteralTypeSchema = schema<WithLiteralType>();
+dec.registerSchema(withLiteralTypeSchema);
+const good2: WithLiteralType = {
+  price: 30,
+  position: {
+    lat: 0,
+    lng: 0,
+  },
+};
+
+test('literal type', 'WithLiteralType', good2);

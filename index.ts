@@ -152,6 +152,9 @@ export class Decoder {
     if (ReferenceTypeC.is(type)) {
       return this.getCaster(type.referenceName);
     }
+    if (LiteralTypeC.is(type)) {
+      return t.type(this.buildCasters(type.props));
+    }
     switch (type) {
       case 'string':
         return t.string;
