@@ -1,13 +1,10 @@
-import { schema } from '../index';
+import { schema, Decoder } from '../index';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 
 interface Location {
   lat: number;
   lng: number;
-}
-
-interface Box<T> {
-  // generic type 1
-  data: T;
 }
 
 namespace google {
@@ -23,11 +20,7 @@ interface User {
   title?: string; // optional primitive
   houses: string[]; // required array
   location: Location; // type reference
-  spouse?: User; // optional type reference
-  children: User[]; // type reference array
   previousLocations?: Location[]; // optional type reference array
-  referrer: User | string; // union type not supported, will become null
-  box: Box<Box<User[]>>; // parameterized type
   marker: google.maps.Marker; // scoped type
 }
 
@@ -37,18 +30,37 @@ interface Special {
   unknown: unknown;
 }
 
-const boxSchema = schema<Box<any>>();
-console.log(JSON.stringify(boxSchema, null, 2));
-console.log('-'.repeat(80));
+const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>()];
 
-const markerSchema = schema<google.maps.Marker>();
-console.log(JSON.stringify(markerSchema, null, 2));
-console.log('-'.repeat(80));
+const dec = new Decoder(schemas);
 
-const userSchema = schema<User>();
-console.log(JSON.stringify(userSchema, null, 2));
-console.log('-'.repeat(80));
+function test(name: string, json: unknown) {
+  const res = dec.decode<User>('User', json);
+  if (isRight(res)) {
+    console.log(name, JSON.stringify(res.right) === JSON.stringify(good1));
+  } else {
+    console.log(name, PathReporter.report(res));
+  }
+}
 
-const specialSchema = schema<Special>();
-console.log(JSON.stringify(specialSchema, null, 2));
-console.log('-'.repeat(80));
+const good1: User = {
+  name: 'Yang',
+  title: 'Life Hacker',
+  houses: ['1111 Mission St'],
+  location: {
+    lat: 0,
+    lng: 37,
+  },
+  marker: {
+    value: 'marker',
+  },
+};
+test('good1', good1);
+
+const bad1 = {
+  name: 123,
+  Title: 'Life Hacker',
+  houses: '1111 Mission St',
+  location: '0/37',
+};
+test('bad1', bad1);
