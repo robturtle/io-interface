@@ -10,6 +10,7 @@ export interface Casters {
 export declare class Decoder {
   readonly casters: Casters;
   constructor(schemas?: runtime.Schema[]);
+  static errors(result: Either<t.Errors, any>): string[];
   decode<T>(typeName: string, data: unknown): Either<t.Errors, T>;
   decodeArray<T>(typeName: string, data: unknown): Either<t.Errors, T[]>;
   registerSchema(spec: runtime.Schema): void;
