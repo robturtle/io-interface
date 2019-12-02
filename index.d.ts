@@ -18,7 +18,7 @@ export declare class Decoder implements ICaster {
   private todos;
   private resolves;
   /** @since 1.3.0 */
-  constructor(schemas?: runtime.Schema[], classCasters?: Casters);
+  constructor(schemas?: runtime.Schema[], casters?: Casters);
   /** @since 1.1.0 */
   decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined;
   /** @since 1.1.0 */
