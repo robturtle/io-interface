@@ -1,8 +1,6 @@
 import * as t from 'io-ts';
 import { runtime } from 'ts-transformer-interface';
 import { ICaster } from 'ts-transformer-decoder-cast';
-/** @since 1.5.13 */
-export * from './types';
 /** @since 1.0.0 */
 export { runtime } from 'ts-transformer-interface';
 /** @since 1.0.0 */
