@@ -118,6 +118,48 @@ decoder.casters.Date = DateFromISOString;
 decoder.registerSchema(schema<Order>());
 ```
 
+### Attach custom values
+
+Sometimes you want attach some custom values onto the object. You can do it via the magical attribute `attrs`. If a field of the interface is named `attrs`, it will bypass the validation and be assigned as an empty object. So you should declare all fields inside `attrs` as **optional** since they're empty from the data source in the first place.
+
+```typescript
+interface Compound {
+  lat: number;
+  lng: number;
+  attrs: {
+    // it will be an empty object after decoding
+    marker?: google.maps.Marker; // mark it as optional
+  };
+}
+
+// ...
+api.requestAndCast<Compound>(url).subscribe(compound => {
+  // here: compound.attrs === {}
+});
+
+// ...
+
+// after some biz logic ...
+compound.marker = new google.maps.Marker();
+// ...
+```
+
+So we have clear vision that which of the fields are from the data source and which of them are added later on.
+
+But please do **NOT** use this feature to do name mapping like:
+
+```typescript
+// do NOT do this!!!
+interface Order {
+  user_uid: string;
+  attrs: {
+    userUid: string;
+  };
+}
+```
+
+This feature is only used to attach new values. Tasks like name mapping should live inside a middleware. And feature request for this is welcomed (but without guarantee that it will be implemented soon).
+
 ## Installation
 
 ### Setup ts-patch
