@@ -1,5 +1,6 @@
 import { Decoder, runtime, schema } from '../index';
 import { DateFromISOString } from 'io-ts-types/lib/DateFromISOString';
+import { casters, Latitude, Longitude, NonEmptyString } from '../types';
 
 interface Location {
   lat: number;
@@ -248,3 +249,30 @@ interface Shift {
 }
 dec.registerSchema(schema<Shift>());
 test('class casters', 'Shift', { clockIn: new Date().toISOString() });
+
+// builtin casters
+Object.assign(dec.casters, casters);
+
+interface TryBuiltins {
+  date: Date;
+  lat: Latitude;
+  lng: Longitude;
+  note: NonEmptyString;
+}
+const tryBuiltinsSchema = schema<TryBuiltins>();
+dec.registerSchema(tryBuiltinsSchema);
+const good6 = {
+  lat: 80,
+  lng: 107,
+  note: 'less sugar, no ice',
+  date: '2019-12-02T02:03:06.783Z',
+};
+test('builtin casters', 'TryBuiltins', good6);
+
+const bad2 = {
+  lat: 10000,
+  lng: '107',
+  note: '',
+  date: '19 Dec 25th',
+};
+test('builtin error example', 'TryBuiltins', bad2);
