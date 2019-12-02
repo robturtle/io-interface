@@ -269,6 +269,11 @@ const good6 = {
 };
 test('builtin casters', 'TryBuiltins', good6);
 
+const decoded: TryBuiltins = api.requestAndCast<TryBuiltins>(good6);
+console.log('decoded.lat:', typeof decoded.lat);
+console.log('decoded.note:', typeof decoded.note);
+console.log('decoded.date instanceof Date', decoded.date instanceof Date);
+
 const bad2 = {
   lat: 10000,
   lng: '107',
