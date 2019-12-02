@@ -1,6 +1,6 @@
 {
   "name": "io-interface",
-  "version": "1.5.11",
+  "version": "1.5.12",
   "description": "Generate io-ts codec solution from TypeScript native interface",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
