@@ -1,6 +1,10 @@
 ## 1.4.0
 
 - export test compiler
+- integrate common types
+  - Date
+  - Latitude
+  - Longitude
 
 ## 1.3.0
 
