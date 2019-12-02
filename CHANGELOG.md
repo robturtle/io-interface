@@ -1,3 +1,7 @@
+## 1.5.0
+
+- supports `attrs` mount point for custom values
+
 ## 1.4.0
 
 - export test compiler

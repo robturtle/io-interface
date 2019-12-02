@@ -11,12 +11,32 @@ export interface Caster<T = any> extends t.Type<T> {}
 export interface Casters {
   [type: string]: Caster;
 }
+/**
+ * Use this to attach additional values to the interface
+ * other than the original source.
+ *
+ * You should mark all fields inside attrs as optional since
+ * they are not defined from the data source.
+ *
+ * The Decoder will think it as "any" and assign an empty
+ * object to it.
+ * @since 1.5.0
+ * @example
+ * interface User {
+ *   name: string;
+ *   attrs: {
+ *     marker?: google.maps.Marker
+ *   }
+ * }
+ */
+export declare const ATTRS_KEYWORD = 'attrs';
 /** @since 1.0.0 */
 export declare class Decoder implements ICaster {
   /** @since 1.0.0 */
   readonly casters: Casters;
   private todos;
   private resolves;
+  private withAttributes;
   /** @since 1.3.0 */
   constructor(schemas?: runtime.Schema[], casters?: Casters);
   /** @since 1.1.0 */

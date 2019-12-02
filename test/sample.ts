@@ -281,3 +281,25 @@ const bad2 = {
   date: '19 Dec 25th',
 };
 test('builtin error example', 'TryBuiltins', bad2);
+
+// attrs
+namespace google {
+  export namespace maps {
+    export class Icon {} // do not register this coz it's not from the backend
+  }
+}
+interface WithAttrs {
+  name: string;
+  attrs: {
+    marker: google.maps.Icon;
+  };
+}
+dec.registerSchema(schema<WithAttrs>());
+const good13 = {
+  name: 'sth',
+};
+console.log('With attrs:');
+const decoded13 = dec.decode<WithAttrs>('WithAttrs', good13, console.error);
+console.log('decoded.name should be sth:', decoded13?.name);
+console.log('decoded.attrs should be {}:', JSON.stringify(decoded13?.attrs));
+console.log('-'.repeat(40));

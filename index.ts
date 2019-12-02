@@ -62,6 +62,26 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
   props: t.array(PropertyC),
 });
 
+/**
+ * Use this to attach additional values to the interface
+ * other than the original source.
+ *
+ * You should mark all fields inside attrs as optional since
+ * they are not defined from the data source.
+ *
+ * The Decoder will think it as "any" and assign an empty
+ * object to it.
+ * @since 1.5.0
+ * @example
+ * interface User {
+ *   name: string;
+ *   attrs: {
+ *     marker?: google.maps.Marker
+ *   }
+ * }
+ */
+export const ATTRS_KEYWORD = 'attrs';
+
 /** @since 1.0.0 */
 export class Decoder implements ICaster {
   /** @since 1.0.0 */
@@ -69,6 +89,7 @@ export class Decoder implements ICaster {
 
   private todos: { [name: string]: boolean } = {};
   private resolves: { [name: string]: boolean } = {};
+  private withAttributes: { [name: string]: boolean } = {};
 
   /** @since 1.3.0 */
   constructor(schemas: runtime.Schema[] = [], casters: Casters = {}) {
@@ -79,7 +100,8 @@ export class Decoder implements ICaster {
 
   /** @since 1.1.0 */
   decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined {
-    return this.processResult(this.getCaster<T>(typeName).decode(data), onError);
+    const result = this.getCaster<T>(typeName).decode(data);
+    return this.processResult(typeName, result, onError);
   }
 
   /** @since 1.1.0 */
@@ -88,15 +110,21 @@ export class Decoder implements ICaster {
     data: unknown,
     onError?: (errors: string[]) => void,
   ): T[] | undefined {
-    return this.processResult(this.getArrayCaster<T>(typeName).decode(data), onError);
+    const result = this.getArrayCaster<T>(typeName).decode(data);
+    return this.processResult(typeName, result, onError);
   }
 
   private processResult<T>(
+    typeName: string,
     result: Either<t.Errors, T>,
     onError?: (errors: string[]) => void,
   ): T | undefined {
     if (isRight(result)) {
-      return result.right;
+      const decoded = result.right;
+      if (typeName in this.withAttributes) {
+        (decoded as any).attrs = {};
+      }
+      return decoded;
     } else if (onError) {
       onError(this.errors(result));
     }
@@ -114,6 +142,9 @@ export class Decoder implements ICaster {
   }
 
   private buildCaster(props: runtime.Property[], name?: string): Caster {
+    if (name && props.some(p => p.name === ATTRS_KEYWORD)) {
+      this.withAttributes[name] = true;
+    }
     const required = props.filter(p => !p.optional);
     const optional = props.filter(p => p.optional);
     if (required.length > 0 && optional.length > 0) {
@@ -157,6 +188,9 @@ export class Decoder implements ICaster {
   private buildCasters(props: runtime.Property[], name?: string): Casters {
     const casters: Casters = {};
     props.forEach(p => {
+      if (p.name === ATTRS_KEYWORD) {
+        return t.undefined;
+      }
       let caster;
       try {
         caster = this.buildTypeCaster(p.type);
