@@ -1,3 +1,7 @@
+## 1.4.0
+
+- export test compiler
+
 ## 1.3.0
 
 - add `classCasters` to constructor

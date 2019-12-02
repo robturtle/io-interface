@@ -1,4 +1,4 @@
-import { compile } from './compile';
+import { compile } from '../../compiler';
 import * as path from 'path';
 
 compile([path.join(__dirname, '../sample.ts')]);
