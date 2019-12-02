@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/robturtle/io-interface#readme",
   "devDependencies": {
+    "@types/node": "^12.12.14",
     "badges": "^2.3.0",
     "husky": "^3.1.0",
     "io-ts": "^2.0.1",
@@ -38,7 +39,6 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "@types/node": "^12.12.14",
     "fp-ts": "^2.2.0",
     "monocle-ts": "^2.0.0",
     "io-ts-types": "^0.5.2",
