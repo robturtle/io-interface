@@ -2,8 +2,8 @@
   "name": "io-interface",
   "version": "1.5.4",
   "description": "Generate io-ts codec solution from TypeScript native interface",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "cd test && tsc && node compile && node sample.js",
     "pretest": "./build.sh",
