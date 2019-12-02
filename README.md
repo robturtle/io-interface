@@ -63,7 +63,7 @@ Also
 
 ### You need declare schemas in topological order
 
-Right now there's no depedency resolver implemented. So for example you have these interfaces:
+Right now there's no dependency resolver implemented. So for example you have these interfaces:
 
 ```typescript
 interface LatLng {
@@ -99,7 +99,7 @@ interface Order {
 }
 ```
 
-We have to manually create a decoder for a class. Luckly the decoder for `Date` is already implemented in [io-ts-types](https://gcanti.github.io/io-ts-types/modules/DateFromISOString.ts.html). What we need to do is to provide it as classDecoders as the second constructor argument:
+We have to manually create a caster for a class. Luckily the decoder for `Date` is already implemented in [io-ts-types](https://gcanti.github.io/io-ts-types/modules/DateFromISOString.ts.html). What we need to do is to just incluce into the 2nd argument `casters`.
 
 ```typescript
 import { DateFromISOString } from 'io-ts-types/lib/DateFromISOString';
