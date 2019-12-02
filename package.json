@@ -24,7 +24,9 @@
     "transform-request.js",
     "runtime-schema.js",
     "compiler.ts",
-    "compiler.js"
+    "compiler.js",
+    "types.ts",
+    "types.js"
   ],
   "author": "Yang Liu",
   "license": "MIT",
