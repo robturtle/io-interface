@@ -22,7 +22,9 @@
     "index.d.ts",
     "transform-interface.js",
     "transform-request.js",
-    "runtime-schema.js"
+    "runtime-schema.js",
+    "compiler.ts",
+    "compiler.js"
   ],
   "author": "Yang Liu",
   "license": "MIT",
