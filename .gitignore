@@ -6,3 +6,4 @@ dist/
 /decoder.d.ts
 /runtime-schema.*
 /transform-*.ts
+lib/
