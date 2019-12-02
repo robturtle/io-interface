@@ -1,6 +1,6 @@
-import { Decoder, runtime, schema } from '../index';
+import { Decoder, runtime, schema } from '../src';
 import { DateFromISOString } from 'io-ts-types/lib/DateFromISOString';
-import { casters, Latitude, Longitude, NonEmptyString } from '../types';
+import { casters, Latitude, Longitude, NonEmptyString } from '../src/types';
 
 interface Location {
   lat: number;
