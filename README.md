@@ -60,6 +60,7 @@ Also
 3. Union types are NOT supported yet (PR, feature request welcomed if you really need this to work with a bad-designed API)
 4. `null`, `any`, `unknown` are illegal.
 5. Recursive types are NOT supported.
+6. intersection types are NOT supported YET. (it's useful to implement custom validations)
 
 ### You need declare schemas in topological order
 

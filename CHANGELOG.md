@@ -5,10 +5,11 @@
   - Date
   - Latitude
   - Longitude
+  - NonEmptyString
 
 ## 1.3.0
 
-- add `classCasters` to constructor
+- add `casters` to constructor
 
 ## 1.2.0
 
