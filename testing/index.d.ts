@@ -1,9 +1,9 @@
 import * as ts from 'typescript';
-import transformInterface from './transform-interface';
+import transformInterface from '../transform-interface';
 /** @since 1.4.0 */
-export { default as transformInterface } from './transform-interface';
+export { default as transformInterface } from '../transform-interface';
 /** @since 1.4.0 */
-export { default as transformRequest } from './transform-request';
+export { default as transformRequest } from '../transform-request';
 /**
  * Should only use it for testing.
  * @since 1.4.0

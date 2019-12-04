@@ -1,0 +1,8 @@
+{
+  "name": "types",
+  "version": "1.0.0-PLACEHOLDER",
+  "description": "Useful types & casters for io-interface",
+  "keywords": [],
+  "author": "Yang Liu",
+  "license": "MIT"
+}

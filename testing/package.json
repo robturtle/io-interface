@@ -1,0 +1,12 @@
+{
+  "name": "testing",
+  "version": "1.0.0-PLACEHOLDER",
+  "description": "provides a tester compilers for io-interface",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
