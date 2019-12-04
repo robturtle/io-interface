@@ -66,5 +66,5 @@
     /* required by badges */
     "maxNodeModuleJsDepth": 5
   },
-  "include": ["decoder.ts", "types/", "testing/"]
+  "include": ["decoder.ts", "types/**/*.ts", "testing/**/*.ts"]
 }
