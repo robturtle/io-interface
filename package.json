@@ -22,8 +22,10 @@
     "transform-interface.js",
     "transform-request.js",
     "runtime-schema.js",
+    "compiler.d.ts",
     "compiler.ts",
     "compiler.js",
+    "types.d.ts",
     "types.ts",
     "types.js"
   ],
