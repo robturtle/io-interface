@@ -9,3 +9,4 @@ mv replaced runtime-schema.ts
 
 tsc
 npx pretty-quick
+cp package.json lib/
