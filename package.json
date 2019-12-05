@@ -17,15 +17,7 @@
     "io-ts"
   ],
   "files": [
-    "index.js",
-    "index.d.ts",
-    "transform-interface.js",
-    "transform-interface.d.ts",
-    "transform-request.js",
-    "transform-request.d.ts",
-    "runtime-schema.js",
-    "testing/",
-    "types/"
+    "lib"
   ],
   "author": "Yang Liu",
   "license": "MIT",

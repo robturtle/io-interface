@@ -5,3 +5,4 @@ node_modules/
 dist/
 /runtime-schema*
 /transform*
+lib/
