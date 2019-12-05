@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm -rf lib/
+
 cp ./node_modules/ts-transformer-interface/transformer.ts ./transform-interface.ts
 cp ./node_modules/ts-transformer-interface/runtime-schema.ts ./runtime-schema.ts
 cp ./node_modules/ts-transformer-decoder-cast/transformer.ts ./transform-request.ts
