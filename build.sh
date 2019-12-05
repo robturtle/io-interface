@@ -4,8 +4,8 @@ cp ./node_modules/ts-transformer-interface/transformer.ts ./transform-interface.
 cp ./node_modules/ts-transformer-interface/runtime-schema.ts ./runtime-schema.ts
 cp ./node_modules/ts-transformer-decoder-cast/transformer.ts ./transform-request.ts
 
-cp ./node_modules/ts-transformer-interface/transformer.js ./transform-interface.js
-cp ./node_modules/ts-transformer-interface/runtime-schema.js ./runtime-schema.js
-cp ./node_modules/ts-transformer-decoder-cast/transformer.js ./transform-request.js
+cat runtime-schema.ts | sed 's/index.d/index/' > replaced
+mv replaced runtime-schema.ts
+
 tsc
 npx pretty-quick

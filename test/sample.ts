@@ -1,6 +1,5 @@
 import { Decoder, runtime, schema } from '../index';
-import { DateFromISOString } from 'io-ts-types/lib/DateFromISOString';
-import { casters, Latitude, Longitude, NonEmptyString } from '../types';
+import { casters, Latitude, Longitude, NonEmptyString } from '../index';
 
 interface Location {
   lat: number;
@@ -26,11 +25,8 @@ interface User {
 
 const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>()];
 
-const classCasters = {
-  Date: DateFromISOString,
-};
-
-const dec = new Decoder(schemas, classCasters);
+const dec = new Decoder(schemas, casters);
+console.log(dec);
 
 function test<T>(name: string, type: string, json: unknown) {
   const res = dec.decode<T>(type, json, errors => console.error(name, errors));
