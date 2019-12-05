@@ -23,7 +23,14 @@ interface User {
   marker: google.maps.Marker; // scoped type
 }
 
-const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>()];
+// this is simply to test if i use internal '[required]' or '[optional]'
+// type names would it conflicts to other definitions
+interface UserB {
+  name?: string;
+  title: string;
+}
+
+const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>(), schema<UserB>()];
 
 const dec = new Decoder(schemas, casters);
 console.log(dec);
@@ -64,6 +71,7 @@ const bad1 = {
   location: '0/37',
 };
 test<User>('error example:', 'User', bad1);
+test<UserB>('error example 2:', 'UserB', bad1);
 
 // name conflicts
 const duplicatedSchema: runtime.Schema = {

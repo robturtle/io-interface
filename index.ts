@@ -152,7 +152,10 @@ export class Decoder implements ICaster {
     const optional = props.filter(p => p.optional);
     if (required.length > 0 && optional.length > 0) {
       return t.intersection(
-        [t.type(this.buildCasters(required, name)), t.partial(this.buildCasters(optional, name))],
+        [
+          t.type(this.buildCasters(required, name), '[required]'),
+          t.partial(this.buildCasters(optional, name), '[optional]'),
+        ],
         name,
       );
     } else if (required.length > 0) {
