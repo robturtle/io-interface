@@ -90,7 +90,7 @@ const schemas = [
 
 But don't worry too much about this, if you declare them in a wrong order, you will receive a error from the library.
 
-### Assign decoders to classes
+### Assign casters to classes
 
 It's very often we're passing `Date` in JSON, and `Date` is a class instead of an interface in TypeScript.
 
@@ -100,7 +100,7 @@ interface Order {
 }
 ```
 
-We have to manually create a caster for a class. Luckily the decoder for `Date` is already implemented in [io-ts-types](https://gcanti.github.io/io-ts-types/modules/DateFromISOString.ts.html). What we need to do is to just incluce into the 2nd argument `casters`.
+We have to manually create a caster for a class. Luckily the decoder for `Date` is already implemented in [io-ts-types](https://gcanti.github.io/io-ts-types/modules/DateFromISOString.ts.html). What we need to do is to just incluce into the 2nd argument.
 
 ```typescript
 import { DateFromISOString } from 'io-ts-types/lib/DateFromISOString';
@@ -116,6 +116,20 @@ It's equivalent to:
 const decoder = new Decoder();
 decoder.casters.Date = DateFromISOString;
 decoder.registerSchema(schema<Order>());
+```
+
+### Builtin types
+
+In [types.ts](types.ts) you can found some common types and its casters:
+
+```typescript
+/** @since 1.4.0 */
+export const casters = {
+  Date: DateFromISOString,
+  Latitude: Latitude,
+  Longitude: Longitude,
+  NonEmptyString: NonEmptyString,
+};
 ```
 
 ### Attach custom values
@@ -268,20 +282,6 @@ readonly schemas = [schema<Todo>()];
       filter(todo => !!todo),
     );
   }
-```
-
-## Builtin types
-
-In [types.ts](types.ts) you can found some common types and its casters:
-
-```typescript
-/** @since 1.4.0 */
-export const casters = {
-  Date: DateFromISOString,
-  Latitude: Latitude,
-  Longitude: Longitude,
-  NonEmptyString: NonEmptyString,
-};
 ```
 
 ## [Optional] can we DRY it more?
