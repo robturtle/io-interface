@@ -1,5 +1,5 @@
-import { Decoder, runtime, schema } from '../index';
-import { casters, Latitude, Longitude, NonEmptyString } from '../index';
+import { Decoder, runtime, schema } from '..';
+import { casters, Latitude, Longitude, NonEmptyString } from '../types';
 
 interface Location {
   lat: number;
