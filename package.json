@@ -1,6 +1,6 @@
 {
   "name": "io-interface",
-  "version": "1.5.32",
+  "version": "1.5.33",
   "description": "Generate io-ts codec solution from TypeScript native interface",
   "scripts": {
     "test": "cd test && tsc && node compile && node sample.js",
