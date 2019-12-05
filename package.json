@@ -4,7 +4,7 @@
   "description": "Generate io-ts codec solution from TypeScript native interface",
   "scripts": {
     "test": "cd test && tsc && node compile && node sample.js",
-    "prepublish": "./build.sh",
+    "prepublishOnly": "./build.sh",
     "pretest": "./build.sh",
     "posttest": "projectz compile"
   },
