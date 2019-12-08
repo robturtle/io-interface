@@ -1,4 +1,4 @@
-import { Decoder, runtime, schema } from '..';
+import { Decoder, runtime, schema, extend } from '..';
 import { casters, Latitude, Longitude, NonEmptyString } from '../types';
 
 interface Location {
@@ -344,3 +344,37 @@ if (guest) {
 }
 
 test('builder', 'Guest', good14);
+
+// extend function
+interface ICustomer {
+  firstName: string;
+  lastName: string;
+}
+
+const Customer = extend<ICustomer>()(cus => ({
+  get fullName(): string {
+    return `${cus.firstName} ${cus.lastName}`;
+  },
+}));
+
+type Customer = InstanceType<typeof Customer>;
+
+dec.register({
+  schema: schema<ICustomer>(),
+  className: 'Customer',
+  useClass: Customer,
+});
+
+const good15 = { firstName: 'Yang', lastName: 'Liu' };
+
+const cus: Customer | undefined = dec.decode('Customer', good15);
+
+if (cus) {
+  console.log('extend function:', JSON.stringify(cus, null, 2));
+} else {
+  console.log('extend function NOT WORKING!!!');
+}
+
+// FIXME: need to support interaction type for this. Check the ts-transformer-keys-2 for the code example
+// const cus2: Customer = api.requestAndCast<Customer>(good15);
+// console.log('extend function from requestAndCast:', JSON.stringify(cus2, null, 2));
