@@ -115,7 +115,7 @@ It's equivalent to:
 ```typescript
 const decoder = new Decoder();
 decoder.casters.Date = DateFromISOString;
-decoder.registerSchema(schema<Order>());
+decoder.register(schema<Order>());
 ```
 
 ### Builtin types
@@ -173,6 +173,51 @@ interface Order {
 ```
 
 This feature is only used to attach new values. Tasks like name mapping should live inside a middleware. And feature request for this is welcomed (but without guarantee that it will be implemented soon).
+
+### Extending the interface
+
+The Decoder can convert the outcome to an instance if you pass a `Builder` object:
+
+```typescript
+decoder.register({
+  schema: schema<IGuest>(),
+  className: 'Guest',
+  useClass: Guest,
+});
+
+const guest = decoder.decode<Guest>('Guest', data);
+
+// the above line is equivalent to
+const iGuest = decoder.decode<IGuest>('IGuest', data);
+const guest = new Guest(iGuest);
+```
+
+You may use the `extend` function to extend the interface:
+
+```typescript
+import { extend } from 'io-interface';
+
+interface IUser {
+  firstName: string;
+  lastName: string;
+}
+
+const User = extend<IUser>()(user => {
+  get name(): string {
+    return `${user.firstName} ${user.lastName}`;
+  },
+});
+
+decoder.register({
+  schema: schema<IUser>(),
+  className: 'User',
+  useClass: User,
+});
+
+const user = decoder.decode<User>('User', { firstName: 'Yang', lastName: 'Liu' });
+
+console.log(user.name);
+```
 
 ## Installation
 

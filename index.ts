@@ -82,13 +82,37 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
  */
 export const ATTRS_KEYWORD = 'attrs';
 
-type Constructor = new (...args: any[]) => any;
-
 /** @since 1.6.0 */
 export interface Builder {
   schema: runtime.Schema;
   className: string;
-  useClass: Constructor;
+  useClass: new (...args: any[]) => any;
+}
+
+/**
+ * Extends type T with mixin U.
+ * @since 1.6.0
+ * @example
+ * interface IUser {
+ *   firstName: string;
+ *   lastName: string;
+ * }
+ *
+ * const User = extend<IUser>()({
+ *   get fullName(): string {
+ *     return `${this.firstName} ${this.lastName}`;
+ *   }
+ * });
+ */
+export function extend<T extends object>() {
+  return <U>(mixin: (self: T) => U) => {
+    const impl = class {
+      constructor(data: T) {
+        Object.assign(this, data, mixin(data));
+      }
+    };
+    return (impl as any) as new (data: T) => T & U;
+  };
 }
 
 function isBuilder(o: any): o is Builder {
