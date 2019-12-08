@@ -307,3 +307,40 @@ const decoded13 = dec.decode<WithAttrs>('WithAttrs', good13, console.error);
 console.log('decoded.name should be sth:', decoded13?.name);
 console.log('decoded.attrs should be {}:', JSON.stringify(decoded13?.attrs));
 console.log('-'.repeat(40));
+
+// builder
+interface IGuest {
+  firstName: string;
+  lastName: string;
+}
+
+class Guest implements IGuest {
+  firstName: string;
+  lastName: string;
+
+  constructor(guest: IGuest) {
+    this.firstName = guest.firstName;
+    this.lastName = guest.lastName;
+  }
+
+  get name(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+
+dec.register({
+  schema: schema<IGuest>(),
+  className: 'Guest',
+  useClass: Guest,
+});
+
+const good14 = { firstName: 'Yang', lastName: 'Liu' };
+
+const guest: Guest | undefined = dec.decode<Guest>('Guest', good14);
+if (guest) {
+  console.log(`guest's name: ${guest.name}`);
+} else {
+  console.error('builder NOT WORKING!!!');
+}
+
+test('builder', 'Guest', good14);

@@ -92,7 +92,7 @@ export interface Builder {
 }
 
 function isBuilder(o: any): o is Builder {
-  return typeof o.schema === 'object' && typeof o.modelName === 'string' && o.builder === 'object';
+  return ['schema', 'className', 'useClass'].every(k => k in o);
 }
 
 /** @since 1.0.0 */
