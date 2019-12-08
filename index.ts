@@ -82,10 +82,20 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
  */
 export const ATTRS_KEYWORD = 'attrs';
 
+type Constructor = new (...args: any[]) => any;
+
+interface Builder {
+  modelName: string;
+  builder: Constructor;
+}
+
 /** @since 1.0.0 */
 export class Decoder implements ICaster {
   /** @since 1.0.0 */
   readonly casters: Casters = {};
+
+  /** @since 1.6.0 */
+  readonly constructors: { [clazz: string]: Builder } = {};
 
   private todos: { [name: string]: boolean } = {};
   private resolves: { [name: string]: boolean } = {};
@@ -100,8 +110,17 @@ export class Decoder implements ICaster {
 
   /** @since 1.1.0 */
   decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined {
-    const result = this.getCaster<T>(typeName).decode(data);
-    return this.processResult(typeName, result, onError);
+    if (typeName in this.constructors) {
+      const { modelName, builder } = this.constructors[typeName];
+      const result = this.getCaster<T>(modelName).decode(data);
+      const decoded = this.processResult(modelName, result, onError);
+      if (decoded) {
+        return new builder(decoded);
+      }
+    } else {
+      const result = this.getCaster<T>(typeName).decode(data);
+      return this.processResult(typeName, result, onError);
+    }
   }
 
   /** @since 1.1.0 */
@@ -110,8 +129,17 @@ export class Decoder implements ICaster {
     data: unknown,
     onError?: (errors: string[]) => void,
   ): T[] | undefined {
-    const result = this.getArrayCaster<T>(typeName).decode(data);
-    return this.processResult(typeName, result, onError);
+    if (typeName in this.constructors) {
+      const { modelName, builder } = this.constructors[typeName];
+      const result = this.getArrayCaster<T>(typeName).decode(data);
+      const decoded = this.processResult(modelName, result, onError);
+      if (decoded) {
+        return decoded.map(x => new builder(x));
+      }
+    } else {
+      const result = this.getArrayCaster<T>(typeName).decode(data);
+      return this.processResult(typeName, result, onError);
+    }
   }
 
   private processResult<T>(
