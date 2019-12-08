@@ -6,3 +6,4 @@ dist/
 /runtime-schema*
 /transform*
 lib/
+out/

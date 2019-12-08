@@ -84,9 +84,15 @@ export const ATTRS_KEYWORD = 'attrs';
 
 type Constructor = new (...args: any[]) => any;
 
-interface Builder {
-  modelName: string;
-  builder: Constructor;
+/** @since 1.6.0 */
+export interface Builder {
+  schema: runtime.Schema;
+  className: string;
+  useClass: Constructor;
+}
+
+function isBuilder(o: any): o is Builder {
+  return typeof o.schema === 'object' && typeof o.modelName === 'string' && o.builder === 'object';
 }
 
 /** @since 1.0.0 */
@@ -101,17 +107,24 @@ export class Decoder implements ICaster {
   private resolves: { [name: string]: boolean } = {};
   private withAttributes: { [name: string]: boolean } = {};
 
-  /** @since 1.3.0 */
-  constructor(schemas: runtime.Schema[] = [], casters: Casters = {}) {
+  /** @since 1.6.0 */
+  constructor(schemas: Array<runtime.Schema | Builder> = [], casters: Casters = {}) {
     Object.assign(this.casters, casters);
-    schemas.forEach(s => (this.todos[s.name] = true));
-    schemas.forEach(s => this.registerSchema(s));
+    schemas.forEach(s => {
+      if (isBuilder(s)) {
+        this.todos[s.schema.name] = true;
+      } else {
+        this.todos[s.name] = true;
+      }
+    });
+    schemas.forEach(s => this.register(s));
   }
 
   /** @since 1.1.0 */
   decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined {
     if (typeName in this.constructors) {
-      const { modelName, builder } = this.constructors[typeName];
+      const { schema, useClass: builder } = this.constructors[typeName];
+      const modelName = schema.name;
       const result = this.getCaster<T>(modelName).decode(data);
       const decoded = this.processResult(modelName, result, onError);
       if (decoded) {
@@ -130,7 +143,8 @@ export class Decoder implements ICaster {
     onError?: (errors: string[]) => void,
   ): T[] | undefined {
     if (typeName in this.constructors) {
-      const { modelName, builder } = this.constructors[typeName];
+      const { schema, useClass: builder } = this.constructors[typeName];
+      const modelName = schema.name;
       const result = this.getArrayCaster<T>(typeName).decode(data);
       const decoded = this.processResult(modelName, result, onError);
       if (decoded) {
@@ -158,8 +172,17 @@ export class Decoder implements ICaster {
     }
   }
 
-  /** @since 1.0.0 */
-  registerSchema(spec: runtime.Schema) {
+  /** @since 1.6.0 */
+  register(spec: runtime.Schema | Builder) {
+    if (isBuilder(spec)) {
+      this.registerSchema(spec.schema);
+      this.constructors[spec.className] = spec;
+    } else {
+      this.registerSchema(spec);
+    }
+  }
+
+  private registerSchema(spec: runtime.Schema) {
     const name = spec.name;
     if (name in this.resolves) {
       throw new Error(`type '${name}' already registered`);

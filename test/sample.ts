@@ -150,8 +150,8 @@ console.log('-'.repeat(40));
 
 // extends interface
 interface ServiceOrder extends Order {}
-dec.registerSchema(schema<LatLng>());
-dec.registerSchema(schema<ServiceOrder>());
+dec.register(schema<LatLng>());
+dec.register(schema<ServiceOrder>());
 
 const serviceOrder: ServiceOrder = {
   position: { lat: 0, lng: 0 },
@@ -191,7 +191,7 @@ interface WithLiteralType {
   };
 }
 const withLiteralTypeSchema = schema<WithLiteralType>();
-dec.registerSchema(withLiteralTypeSchema);
+dec.register(withLiteralTypeSchema);
 const good2: WithLiteralType = {
   price: 30,
   position: {
@@ -251,7 +251,7 @@ console.log('-'.repeat(40));
 interface Shift {
   clockIn: Date;
 }
-dec.registerSchema(schema<Shift>());
+dec.register(schema<Shift>());
 test('class casters', 'Shift', { clockIn: new Date().toISOString() });
 
 // builtin casters
@@ -264,7 +264,7 @@ interface TryBuiltins {
   note: NonEmptyString;
 }
 const tryBuiltinsSchema = schema<TryBuiltins>();
-dec.registerSchema(tryBuiltinsSchema);
+dec.register(tryBuiltinsSchema);
 const good6 = {
   lat: 80,
   lng: 107,
@@ -298,7 +298,7 @@ interface WithAttrs {
     marker: google.maps.Icon;
   };
 }
-dec.registerSchema(schema<WithAttrs>());
+dec.register(schema<WithAttrs>());
 const good13 = {
   name: 'sth',
 };
