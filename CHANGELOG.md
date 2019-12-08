@@ -1,3 +1,7 @@
+## 1.6.0
+
+- supports `Builder` to convert the outcome with a constructor
+
 ## 1.5.0
 
 - supports `attrs` mount point for custom values
