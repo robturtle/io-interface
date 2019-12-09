@@ -103,6 +103,8 @@ export interface Builder {
  *     return `${this.firstName} ${this.lastName}`;
  *   }
  * });
+ *
+ * type User = InstanceType<typeof User>;
  */
 export function extend<T extends object>() {
   return <U>(mixin: (self: T) => U) => {
