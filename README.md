@@ -202,11 +202,11 @@ interface IUser {
   lastName: string;
 }
 
-const User = extend<IUser>()(user => {
+const User = extend<IUser>()(user => ({
   get name(): string {
     return `${user.firstName} ${user.lastName}`;
   },
-});
+}));
 
 type User = InstanceType<typeof User>;
 
@@ -219,6 +219,35 @@ decoder.register({
 const user = decoder.decode<User>('User', { firstName: 'Yang', lastName: 'Liu' });
 
 console.log(user.name);
+```
+
+#### Extended constructors are composible
+
+You can use a registered extended type as a field of other interface.
+
+```typescript
+interface ICompany {
+  user: User; // use a registed extended type here
+  name: string;
+}
+const Company = extend<ICompany>()(c => ({
+  get boss(): string {
+    return c.user.name;
+  },
+}));
+type Company = InstanceType<typeof Company>;
+
+// register company
+
+const json = {
+  name: 'Good Inc',
+  user: {
+    firstName: 'Yang',
+    lastName: 'Liu',
+  },
+};
+
+const company = decoder.decode<Company>('Company', json);
 ```
 
 ## Installation

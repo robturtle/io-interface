@@ -238,10 +238,7 @@ export class Decoder implements ICaster {
         spec.className,
         (input: unknown): input is InstanceType<typeof constructor> => schemaCaster.is(input),
         (input, context) => schemaCaster.validate(input, context),
-        (input: unknown) => {
-          console.log('constructor called');
-          return new constructor(input);
-        },
+        (input: unknown) => new constructor(input),
       ),
     );
   }
