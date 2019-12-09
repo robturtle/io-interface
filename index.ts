@@ -124,7 +124,7 @@ function isBuilder(o: any): o is Builder {
 /** @since 1.7.0 */
 export interface GenericType {
   type: string;
-  arg: string;
+  arg: string | GenericType;
 }
 
 /** @since 1.0.0 */
@@ -173,23 +173,20 @@ export class Decoder implements ICaster {
     if (typeof typeArg === 'string') {
       return this.processResult(this.getCaster<T>(typeArg), typeArg, data, onError);
     } else {
-      const { type, arg } = typeArg;
-      return this.decodeF<T>(type, arg, data, onError);
+      return this.processResult(this.buildGenericCaster(typeArg), typeArg.type, data, onError);
     }
   }
 
-  private decodeF<T>(
-    factoryName: string,
-    typeName: string,
-    data: unknown,
-    onError?: (errors: string[]) => void,
-  ): T | undefined {
-    const factory = this.factories[factoryName];
+  private buildGenericCaster({ type, arg }: GenericType): Caster {
+    const factory = this.factories[type];
     if (!factory) {
-      throw new Error(`factory '${factoryName}' not registered`);
+      throw new Error(`generic type '${type}' not registered`);
     }
-    const caster = factory(this.getCaster(typeName));
-    return this.processResult(caster, typeName, data, onError);
+    if (typeof arg === 'string') {
+      return factory(this.getCaster(arg));
+    } else {
+      return factory(this.buildGenericCaster(arg));
+    }
   }
 
   /**
