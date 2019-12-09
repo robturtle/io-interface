@@ -1,3 +1,7 @@
+## 1.7.3
+
+- export `Int` branded type
+
 ## 1.7.0
 
 - supports `GenericType`

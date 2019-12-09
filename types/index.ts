@@ -30,7 +30,7 @@ export const Longitude = t.brand(
 /** @since 1.7.3 */
 export { Int } from 'io-ts';
 
-/** @since 1.4.0 */
+/** @since 1.7.3 */
 export const casters = {
   Date: DateFromISOString,
   Int: t.Int,

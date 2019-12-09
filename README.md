@@ -123,9 +123,10 @@ decoder.register(schema<Order>());
 In [types.ts](types.ts) you can found some common types and its casters:
 
 ```typescript
-/** @since 1.4.0 */
+/** @since 1.7.3 */
 export const casters = {
   Date: DateFromISOString,
+  Int: t.Int,
   Latitude: Latitude,
   Longitude: Longitude,
   NonEmptyString: NonEmptyString,
