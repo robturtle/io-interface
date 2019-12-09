@@ -428,3 +428,16 @@ const bad37 = {
   },
 };
 test('constructor error example:', 'Company', bad37);
+
+// nested Array
+const good188: User[][] = [[good1]];
+const decoded188 = dec.decode(
+  { type: 'Array', arg: { type: 'Array', arg: 'User' } },
+  good188,
+  e => {
+    throw e;
+  },
+);
+if (JSON.stringify(good188) !== JSON.stringify(decoded188)) {
+  throw new Error('nested Array NOT WORKING!!!');
+}
