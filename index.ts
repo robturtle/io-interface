@@ -126,6 +126,11 @@ export class Decoder implements ICaster {
   /** @since 1.0.0 */
   readonly casters: Casters = {};
 
+  /** @since 1.7.0*/
+  readonly factories: { [name: string]: (caster: Caster) => Caster } = {
+    Array: t.array,
+  };
+
   /** @since 1.6.0 */
   readonly constructors: { [clazz: string]: Builder } = {};
 
@@ -152,13 +157,28 @@ export class Decoder implements ICaster {
     return this.processResult(this.getCaster<T>(typeName), typeName, data, onError);
   }
 
+  /** @since 1.7.0 */
+  decodeF<T>(
+    factoryName: string,
+    typeName: string,
+    data: unknown,
+    onError?: (errors: string[]) => void,
+  ): T | undefined {
+    const factory = this.factories[factoryName];
+    if (!factory) {
+      throw new Error(`factory '${factoryName}' not registered`);
+    }
+    const caster = factory(this.getCaster(typeName));
+    return this.processResult(caster, typeName, data, onError);
+  }
+
   /** @since 1.1.0 */
   decodeArray<T>(
     typeName: string,
     data: unknown,
     onError?: (errors: string[]) => void,
   ): T[] | undefined {
-    return this.processResult(this.getArrayCaster<T>(typeName), typeName, data, onError);
+    return this.decodeF<T[]>('Array', typeName, data, onError);
   }
 
   private processResult<T>(
