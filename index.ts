@@ -1,4 +1,4 @@
-import { Either, isRight } from 'fp-ts/lib/Either';
+import { Either, isRight, either } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { runtime } from 'ts-transformer-interface';
@@ -189,11 +189,11 @@ export class Decoder implements ICaster {
   ): T | undefined {
     const result = caster.decode(data);
     if (isRight(result)) {
-      const encoded = caster.encode(result.right);
+      const decoded = result.right;
       if (typeName in this.withAttributes) {
-        (encoded as any).attrs = {};
+        (decoded as any).attrs = {};
       }
-      return encoded;
+      return decoded;
     } else if (onError) {
       onError(this.errors(result));
     }
@@ -258,9 +258,10 @@ export class Decoder implements ICaster {
     return schemaCaster.pipe(
       new t.Type(
         spec.className,
-        (input: unknown): input is InstanceType<typeof constructor> => schemaCaster.is(input),
-        (input, context) => schemaCaster.validate(input, context),
-        (input: unknown) => new constructor(input),
+        (input: unknown): input is InstanceType<typeof constructor> => input instanceof constructor,
+        (input, context) =>
+          either.chain(schemaCaster.validate(input, context), s => t.success(new constructor(s))),
+        t.identity,
       ),
     );
   }
