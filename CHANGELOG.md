@@ -1,3 +1,9 @@
+## 1.7.0
+
+- supports `GenericType`
+- deprecates `decodeArray`
+- unifies to single API `decode(type: string | GenericType, ...)`
+
 ## 1.6.0
 
 - supports `Builder` to convert the outcome with a constructor
