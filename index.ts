@@ -116,7 +116,7 @@ export function extend<T extends object>() {
 }
 
 function isBuilder(o: any): o is Builder {
-  return ['schema', 'className', 'useClass'].every(k => k in o);
+  return ['schema', 'className', 'constructor'].every(k => k in o);
 }
 
 /** @since 1.0.0 */
