@@ -292,7 +292,7 @@ if (typeof decoded.note != 'string') {
 if (!(decoded.date instanceof Date)) {
   throw new Error('date is not a Date');
 }
-if (!(typeof decoded.pages !== 'number')) {
+if (typeof decoded.pages !== 'number') {
   throw new Error('pages is not a number');
 }
 
