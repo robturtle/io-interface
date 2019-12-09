@@ -85,8 +85,8 @@ export const ATTRS_KEYWORD = 'attrs';
 /** @since 1.6.0 */
 export interface Builder {
   schema: runtime.Schema;
+  constructor: new (...args: any[]) => any;
   className: string;
-  useClass: new (...args: any[]) => any;
 }
 
 /**
@@ -147,12 +147,12 @@ export class Decoder implements ICaster {
   /** @since 1.1.0 */
   decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined {
     if (typeName in this.constructors) {
-      const { schema, useClass: builder } = this.constructors[typeName];
+      const { schema, constructor } = this.constructors[typeName];
       const modelName = schema.name;
       const result = this.getCaster<T>(modelName).decode(data);
       const decoded = this.processResult(modelName, result, onError);
       if (decoded) {
-        return new builder(decoded);
+        return new constructor(decoded);
       }
     } else {
       const result = this.getCaster<T>(typeName).decode(data);
@@ -167,12 +167,12 @@ export class Decoder implements ICaster {
     onError?: (errors: string[]) => void,
   ): T[] | undefined {
     if (typeName in this.constructors) {
-      const { schema, useClass: builder } = this.constructors[typeName];
+      const { schema, constructor } = this.constructors[typeName];
       const modelName = schema.name;
       const result = this.getArrayCaster<T>(typeName).decode(data);
       const decoded = this.processResult(modelName, result, onError);
       if (decoded) {
-        return decoded.map(x => new builder(x));
+        return decoded.map(x => new constructor(x));
       }
     } else {
       const result = this.getArrayCaster<T>(typeName).decode(data);

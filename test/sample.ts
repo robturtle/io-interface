@@ -331,7 +331,7 @@ class Guest implements IGuest {
 dec.register({
   schema: schema<IGuest>(),
   className: 'Guest',
-  useClass: Guest,
+  constructor: Guest,
 });
 
 const good14 = { firstName: 'Yang', lastName: 'Liu' };
@@ -362,7 +362,7 @@ type Customer = InstanceType<typeof Customer>;
 dec.register({
   schema: schema<ICustomer>(),
   className: 'Customer',
-  useClass: Customer,
+  constructor: Customer,
 });
 
 const good15 = { firstName: 'Yang', lastName: 'Liu' };

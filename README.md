@@ -181,8 +181,8 @@ The Decoder can convert the outcome to an instance if you pass a `Builder` objec
 ```typescript
 decoder.register({
   schema: schema<IGuest>(),
+  constructor: Guest,
   className: 'Guest',
-  useClass: Guest,
 });
 
 const guest = decoder.decode<Guest>('Guest', data);
@@ -208,10 +208,12 @@ const User = extend<IUser>()(user => {
   },
 });
 
+type User = InstanceType<typeof User>;
+
 decoder.register({
   schema: schema<IUser>(),
-  className: 'User',
-  useClass: User,
+  constructor: User, // matches "const User"
+  className: 'User', // matches name of "type User"
 });
 
 const user = decoder.decode<User>('User', { firstName: 'Yang', lastName: 'Liu' });
