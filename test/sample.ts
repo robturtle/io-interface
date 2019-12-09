@@ -35,8 +35,14 @@ const schemas = [schema<Location>(), schema<google.maps.Marker>(), schema<User>(
 const dec = new Decoder(schemas, casters);
 console.log(dec);
 
-function test<T>(name: string, type: string, json: unknown) {
-  const res = dec.decode<T>(type, json, errors => console.error(name, errors));
+function test<T>(name: string, type: string, json: unknown, raise: boolean = true) {
+  const res = dec.decode<T>(type, json, e => {
+    if (raise) {
+      throw e;
+    } else {
+      console.error(e);
+    }
+  });
   if (res) {
     const equals = JSON.stringify(res) === JSON.stringify(json);
     if (equals) {
@@ -71,8 +77,8 @@ const bad1 = {
   houses: '1111 Mission St',
   location: '0/37',
 };
-test<User>('error example:', 'User', bad1);
-test<UserB>('error example 2:', 'UserB', bad1);
+test<User>('error example:', 'User', bad1, false);
+test<UserB>('error example 2:', 'UserB', bad1, false);
 
 // name conflicts
 const duplicatedSchema: runtime.Schema = {
@@ -231,7 +237,7 @@ const eq3 = JSON.stringify(user) === JSON.stringify(good1);
 if (eq3) {
   console.log('macro expand decode: passed');
 } else {
-  console.error('macro expand decode NOT WORKING!');
+  throw new Error('macro expand decode NOT WORKING!');
 }
 
 const users: User[] = api.requestAndCast<User[]>([good1]);
@@ -239,7 +245,7 @@ const eq4 = JSON.stringify(users) === JSON.stringify([good1]);
 if (eq4) {
   console.log('macro expand decodeArray: passed');
 } else {
-  console.error('macro expand decodeArray NOT WORKING!');
+  throw new Error('macro expand decodeArray NOT WORKING!');
 }
 
 const badUser: User = api.requestAndCast<User>({ statusCode: 401 });
@@ -291,7 +297,7 @@ const bad2 = {
   note: '',
   date: '19 Dec 25th',
 };
-test('builtin error example', 'TryBuiltins', bad2);
+test('builtin error example', 'TryBuiltins', bad2, false);
 
 // attrs
 namespace google {
@@ -310,7 +316,9 @@ const good13 = {
   name: 'sth',
 };
 console.log('With attrs:');
-const decoded13 = dec.decode<WithAttrs>('WithAttrs', good13, console.error);
+const decoded13 = dec.decode<WithAttrs>('WithAttrs', good13, e => {
+  throw e;
+});
 console.log('decoded.name should be sth:', decoded13 && decoded13.name);
 console.log('decoded.attrs should be {}:', JSON.stringify(decoded13 && decoded13.attrs));
 console.log('-'.repeat(40));
@@ -374,7 +382,9 @@ dec.register({
 
 const good15 = { firstName: 'Yang', lastName: 'Liu' };
 
-const cus: Customer | undefined = dec.decode('Customer', good15, console.error);
+const cus: Customer | undefined = dec.decode('Customer', good15, e => {
+  throw e;
+});
 
 if (cus) {
   console.log('extend function:', JSON.stringify(cus, null, 2));
@@ -413,7 +423,9 @@ const good37 = {
   },
 };
 
-const company: Company | undefined = dec.decode<Company>('Company', good37, console.error);
+const company: Company | undefined = dec.decode<Company>('Company', good37, e => {
+  throw e;
+});
 if (company) {
   console.log('nested constructor passed', company);
 } else {
@@ -427,7 +439,7 @@ const bad37 = {
     lastName: 'Liu',
   },
 };
-test('constructor error example:', 'Company', bad37);
+test('constructor error example:', 'Company', bad37, false);
 
 // nested Array
 const good188: User[][] = [[good1]];
