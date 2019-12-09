@@ -98,11 +98,11 @@ export interface Builder {
  *   lastName: string;
  * }
  *
- * const User = extend<IUser>()({
+ * const User = extend<IUser>()(user => ({
  *   get fullName(): string {
- *     return `${this.firstName} ${this.lastName}`;
+ *     return `${user.firstName} ${user.lastName}`;
  *   }
- * });
+ * }));
  *
  * type User = InstanceType<typeof User>;
  */
