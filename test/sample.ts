@@ -45,6 +45,7 @@ function test<T>(name: string, type: string, json: unknown) {
       console.log('DECODER NOT CAST CORRECTLY!');
       console.log('expected:', json);
       console.log('actual', res);
+      throw new Error('test failed');
     }
   }
   console.log('-'.repeat(40));
@@ -87,7 +88,7 @@ const duplicatedSchema: runtime.Schema = {
 
 try {
   new Decoder([...schemas, duplicatedSchema]);
-  console.log('NAME CONFLICT NOT WORKING!');
+  throw new Error('NAME CONFLICT NOT WORKING!');
 } catch (e) {
   console.log('type name conflict:', e.message);
 }
@@ -103,7 +104,7 @@ const TreeSchema = schema<Tree>();
 
 try {
   new Decoder([TreeSchema]);
-  console.log('RECURSIVE DETECTION NOT WORKING!');
+  throw new Error('RECURSIVE DETECTION NOT WORKING!');
 } catch (e) {
   console.log('recursive detection:', e.message);
 }
@@ -124,7 +125,7 @@ const schemasOutOfOrder = [schema<Order>(), schema<LatLng>()];
 
 try {
   new Decoder(schemasOutOfOrder);
-  console.log('TOPOLOGICAL OUT OF ORDER NOT WORKING!');
+  throw new Error('TOPOLOGICAL OUT OF ORDER NOT WORKING!');
 } catch (e) {
   if (!(e as Error).message.match(/depends/)) {
     console.log('TOPOLOGICAL OUT OF ORDER NOT WORKING!');
@@ -139,7 +140,7 @@ const nothingSchema = schema<Nothing>();
 
 try {
   new Decoder([nothingSchema]);
-  console.log('EMPTY DETECTION NOT WORKING!');
+  throw new Error('EMPTY DETECTION NOT WORKING!');
 } catch (e) {
   if (!(e as Error).message.match(/empty/)) {
     console.log('EMPTY DETECTION NOT WORKING!');
@@ -175,7 +176,7 @@ interface WithUnknown {
 [schema<WithNull>(), schema<WithAny>(), schema<WithUnknown>()].forEach(s => {
   try {
     new Decoder([s]);
-    console.log(`SPECIAL DETECTION (${s.name}) NOT WORKING!`);
+    throw new Error(`SPECIAL DETECTION (${s.name}) NOT WORKING!`);
   } catch (e) {
     console.log('special types: ', e.message);
   }
@@ -274,9 +275,15 @@ const good6 = {
 test('builtin casters', 'TryBuiltins', good6);
 
 const decoded: TryBuiltins = api.requestAndCast<TryBuiltins>(good6);
-console.log('decoded.lat:', typeof decoded.lat);
-console.log('decoded.note:', typeof decoded.note);
-console.log('decoded.date instanceof Date', decoded.date instanceof Date);
+if (typeof decoded.lat !== 'number') {
+  throw new Error('lat is not a number');
+}
+if (typeof decoded.note != 'string') {
+  throw new Error('note is not a string');
+}
+if (!(decoded.date instanceof Date)) {
+  throw new Error('date is not a Date');
+}
 
 const bad2 = {
   lat: 10000,
@@ -340,7 +347,7 @@ const guest: Guest | undefined = dec.decode<Guest>('Guest', good14);
 if (guest) {
   console.log(`guest's name: ${guest.name}`);
 } else {
-  console.error('builder NOT WORKING!!!');
+  throw new Error('builder NOT WORKING!!!');
 }
 
 test('builder', 'Guest', good14);
@@ -372,7 +379,7 @@ const cus: Customer | undefined = dec.decode('Customer', good15, console.error);
 if (cus) {
   console.log('extend function:', JSON.stringify(cus, null, 2));
 } else {
-  console.log('extend function NOT WORKING!!!');
+  throw new Error('extend function NOT WORKING!!!');
 }
 
 const cus2: Customer = api.requestAndCast<Customer>(good15);
@@ -410,7 +417,7 @@ const company: Company | undefined = dec.decode<Company>('Company', good37, cons
 if (company) {
   console.log('nested constructor passed', company);
 } else {
-  console.error('nested constructor NOT WORKING!!!');
+  throw new Error('nested constructor NOT WORKING!!!');
 }
 
 const bad37 = {
