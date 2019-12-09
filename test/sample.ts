@@ -304,8 +304,8 @@ const good13 = {
 };
 console.log('With attrs:');
 const decoded13 = dec.decode<WithAttrs>('WithAttrs', good13, console.error);
-console.log('decoded.name should be sth:', decoded13?.name);
-console.log('decoded.attrs should be {}:', JSON.stringify(decoded13?.attrs));
+console.log('decoded.name should be sth:', decoded13 && decoded13.name);
+console.log('decoded.attrs should be {}:', JSON.stringify(decoded13 && decoded13.attrs));
 console.log('-'.repeat(40));
 
 // builder
