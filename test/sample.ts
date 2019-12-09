@@ -367,7 +367,7 @@ dec.register({
 
 const good15 = { firstName: 'Yang', lastName: 'Liu' };
 
-const cus: Customer | undefined = dec.decode('Customer', good15);
+const cus: Customer | undefined = dec.decode('Customer', good15, console.error);
 
 if (cus) {
   console.log('extend function:', JSON.stringify(cus, null, 2));
@@ -377,3 +377,47 @@ if (cus) {
 
 const cus2: Customer = api.requestAndCast<Customer>(good15);
 console.log('extend function from requestAndCast:', JSON.stringify(cus2, null, 2));
+
+// nested constructor
+interface ICompany {
+  name: string;
+  customer: Customer;
+}
+
+const Company = extend<ICompany>()(c => ({
+  get boss(): string {
+    return c.name;
+  },
+}));
+
+type Company = InstanceType<typeof Company>;
+
+dec.register({
+  schema: schema<ICompany>(),
+  className: 'Company',
+  constructor: Company,
+});
+
+const good37 = {
+  name: 'Good Inc',
+  customer: {
+    firstName: 'Yang',
+    lastName: 'Liu',
+  },
+};
+
+const company: Company | undefined = dec.decode<Company>('Company', good37, console.error);
+if (company) {
+  console.log('nested constructor passed', company);
+} else {
+  console.error('nested constructor NOT WORKING!!!');
+}
+
+const bad37 = {
+  name: 'Bad Inc',
+  customer: {
+    first_name: 'Yang',
+    lastName: 'Liu',
+  },
+};
+test('constructor error example:', 'Company', bad37);

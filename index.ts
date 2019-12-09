@@ -137,6 +137,7 @@ export class Decoder implements ICaster {
     schemas.forEach(s => {
       if (isBuilder(s)) {
         this.todos[s.schema.name] = true;
+        this.todos[s.className] = true;
       } else {
         this.todos[s.name] = true;
       }
@@ -146,18 +147,7 @@ export class Decoder implements ICaster {
 
   /** @since 1.1.0 */
   decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined {
-    if (typeName in this.constructors) {
-      const { schema, constructor } = this.constructors[typeName];
-      const modelName = schema.name;
-      const result = this.getCaster<T>(modelName).decode(data);
-      const decoded = this.processResult(modelName, result, onError);
-      if (decoded) {
-        return new constructor(decoded);
-      }
-    } else {
-      const result = this.getCaster<T>(typeName).decode(data);
-      return this.processResult(typeName, result, onError);
-    }
+    return this.processResult(this.getCaster<T>(typeName), typeName, data, onError);
   }
 
   /** @since 1.1.0 */
@@ -166,31 +156,22 @@ export class Decoder implements ICaster {
     data: unknown,
     onError?: (errors: string[]) => void,
   ): T[] | undefined {
-    if (typeName in this.constructors) {
-      const { schema, constructor } = this.constructors[typeName];
-      const modelName = schema.name;
-      const result = this.getArrayCaster<T>(typeName).decode(data);
-      const decoded = this.processResult(modelName, result, onError);
-      if (decoded) {
-        return decoded.map(x => new constructor(x));
-      }
-    } else {
-      const result = this.getArrayCaster<T>(typeName).decode(data);
-      return this.processResult(typeName, result, onError);
-    }
+    return this.processResult(this.getArrayCaster<T>(typeName), typeName, data, onError);
   }
 
   private processResult<T>(
+    caster: Caster<T>,
     typeName: string,
-    result: Either<t.Errors, T>,
+    data: unknown,
     onError?: (errors: string[]) => void,
   ): T | undefined {
+    const result = caster.decode(data);
     if (isRight(result)) {
-      const decoded = result.right;
+      const encoded = caster.encode(result.right);
       if (typeName in this.withAttributes) {
-        (decoded as any).attrs = {};
+        (encoded as any).attrs = {};
       }
-      return decoded;
+      return encoded;
     } else if (onError) {
       onError(this.errors(result));
     }
@@ -199,8 +180,7 @@ export class Decoder implements ICaster {
   /** @since 1.6.0 */
   register(spec: runtime.Schema | Builder) {
     if (isBuilder(spec)) {
-      this.registerSchema(spec.schema);
-      this.constructors[spec.className] = spec;
+      this.registerBuilder(spec);
     } else {
       this.registerSchema(spec);
     }
@@ -237,6 +217,33 @@ export class Decoder implements ICaster {
     } else {
       throw new Error(`type '${name || '<LITERAL>'}' is an empty interface which is not supported`);
     }
+  }
+
+  private registerBuilder(spec: Builder) {
+    this.registerSchema(spec.schema);
+    const name = spec.className;
+    if (name in this.resolves) {
+      throw new Error(`type '${name}' already registered`);
+    }
+    this.resolves[name] = false;
+    this.casters[name] = this.buildConstructor(spec);
+    this.resolves[name] = true;
+  }
+
+  private buildConstructor(spec: Builder) {
+    const schemaCaster = this.getCaster(spec.schema.name);
+    const constructor = spec.constructor;
+    return schemaCaster.pipe(
+      new t.Type(
+        spec.className,
+        (input: unknown): input is InstanceType<typeof constructor> => schemaCaster.is(input),
+        (input, context) => schemaCaster.validate(input, context),
+        (input: unknown) => {
+          console.log('constructor called');
+          return new constructor(input);
+        },
+      ),
+    );
   }
 
   private checkRegistry(typeName: string) {
