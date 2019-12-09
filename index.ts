@@ -159,12 +159,6 @@ export class Decoder implements ICaster {
   }
 
   /** @since 1.7.0 */
-  decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined;
-  decode<T>(
-    genericType: GenericType,
-    data: unknown,
-    onError?: (errors: string[]) => void,
-  ): T | undefined;
   decode<T>(
     typeArg: string | GenericType,
     data: unknown,
