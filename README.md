@@ -176,7 +176,7 @@ This feature is only used to attach new values. Tasks like name mapping should l
 
 ### Extending the interface
 
-The Decoder can convert the outcome to an instance if you pass a `Builder` object:
+The Decoder can convert the outcome to an instance if you register with a `Builder` object:
 
 ```typescript
 decoder.register({
