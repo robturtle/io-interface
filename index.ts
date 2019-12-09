@@ -121,6 +121,12 @@ function isBuilder(o: any): o is Builder {
   return ['schema', 'className', 'constructor'].every(k => k in o);
 }
 
+/** @since 1.7.0 */
+export interface GenericType {
+  type: string;
+  arg: string;
+}
+
 /** @since 1.0.0 */
 export class Decoder implements ICaster {
   /** @since 1.0.0 */
@@ -152,13 +158,27 @@ export class Decoder implements ICaster {
     schemas.forEach(s => this.register(s));
   }
 
-  /** @since 1.1.0 */
-  decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined {
-    return this.processResult(this.getCaster<T>(typeName), typeName, data, onError);
+  /** @since 1.7.0 */
+  decode<T>(typeName: string, data: unknown, onError?: (errors: string[]) => void): T | undefined;
+  decode<T>(
+    genericType: GenericType,
+    data: unknown,
+    onError?: (errors: string[]) => void,
+  ): T | undefined;
+  decode<T>(
+    typeArg: string | GenericType,
+    data: unknown,
+    onError?: (errors: string[]) => void,
+  ): T | undefined {
+    if (typeof typeArg === 'string') {
+      return this.processResult(this.getCaster<T>(typeArg), typeArg, data, onError);
+    } else {
+      const { type, arg } = typeArg;
+      return this.decodeF<T>(type, arg, data, onError);
+    }
   }
 
-  /** @since 1.7.0 */
-  decodeF<T>(
+  private decodeF<T>(
     factoryName: string,
     typeName: string,
     data: unknown,
@@ -172,13 +192,16 @@ export class Decoder implements ICaster {
     return this.processResult(caster, typeName, data, onError);
   }
 
-  /** @since 1.1.0 */
+  /**
+   * @deprecated use decode<T[]>({ type: 'Array', arg: T }, data, onError)
+   * @since 1.1.0
+   */
   decodeArray<T>(
     typeName: string,
     data: unknown,
     onError?: (errors: string[]) => void,
   ): T[] | undefined {
-    return this.decodeF<T[]>('Array', typeName, data, onError);
+    return this.decode<T[]>({ type: 'Array', arg: typeName }, data, onError);
   }
 
   private processResult<T>(
