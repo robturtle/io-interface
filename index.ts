@@ -285,11 +285,6 @@ export class Decoder implements ICaster {
     return this.casters[typeName];
   }
 
-  private getArrayCaster<T>(typeName: string): Caster<T[]> {
-    this.checkRegistry(typeName);
-    return t.array(this.casters[typeName]);
-  }
-
   private buildCasters(props: runtime.Property[], name?: string): Casters {
     const casters: Casters = {};
     props.forEach(p => {
