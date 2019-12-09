@@ -375,6 +375,5 @@ if (cus) {
   console.log('extend function NOT WORKING!!!');
 }
 
-// FIXME: need to support interaction type for this. Check the ts-transformer-keys-2 for the code example
-// const cus2: Customer = api.requestAndCast<Customer>(good15);
-// console.log('extend function from requestAndCast:', JSON.stringify(cus2, null, 2));
+const cus2: Customer = api.requestAndCast<Customer>(good15);
+console.log('extend function from requestAndCast:', JSON.stringify(cus2, null, 2));
