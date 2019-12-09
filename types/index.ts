@@ -27,9 +27,13 @@ export const Longitude = t.brand(
   'Longitude',
 );
 
+/** @since 1.7.3 */
+export { Int } from 'io-ts';
+
 /** @since 1.4.0 */
 export const casters = {
   Date: DateFromISOString,
+  Int: t.Int,
   Latitude: Latitude,
   Longitude: Longitude,
   NonEmptyString: NonEmptyString,

@@ -1,5 +1,5 @@
 import { Decoder, runtime, schema, extend } from '..';
-import { casters, Latitude, Longitude, NonEmptyString } from '../types';
+import { casters, Latitude, Longitude, Int, NonEmptyString } from '../types';
 
 interface Location {
   lat: number;
@@ -266,6 +266,7 @@ Object.assign(dec.casters, casters);
 
 interface TryBuiltins {
   date: Date;
+  pages: Int;
   lat: Latitude;
   lng: Longitude;
   note: NonEmptyString;
@@ -275,6 +276,7 @@ dec.register(tryBuiltinsSchema);
 const good6 = {
   lat: 80,
   lng: 107,
+  pages: 33,
   note: 'less sugar, no ice',
   date: '2019-12-02T02:03:06.783Z',
 };
@@ -289,6 +291,9 @@ if (typeof decoded.note != 'string') {
 }
 if (!(decoded.date instanceof Date)) {
   throw new Error('date is not a Date');
+}
+if (!(typeof decoded.pages !== 'number')) {
+  throw new Error('pages is not a number');
 }
 
 const bad2 = {
