@@ -5,7 +5,7 @@
   "scripts": {
     "test": "cd test && tsc && node compile && node sample.js",
     "pretest": "./build.sh",
-    "posttest": "projectz compile"
+    "posttest": "projectz compile && pretty-quick"
   },
   "repository": {
     "type": "git",
