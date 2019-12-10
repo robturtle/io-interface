@@ -528,5 +528,7 @@ enum OrderStatus {
 dec.register(enumSchema('OrderStatus', OrderStatus));
 
 const st = 'pending';
-console.log(OrderStatus);
 test('enumSchema', 'OrderStatus', st);
+
+const st2 = 'pendding';
+test('enumSchema error example', 'OrderStatus', st2, false);
