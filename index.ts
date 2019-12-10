@@ -16,16 +16,14 @@ export function schema<T extends object>(): runtime.Schema {
 
 /** @since 1.9.0 */
 export function enumSchema(name: string, e: any): CasterBuilder {
+  const inValues = (x: any) => Object.values(e).some(v => v === x);
   return {
     typeName: name,
 
     caster: new t.Type(
       name,
-      (x: unknown): x is typeof e => (typeof x === 'string' || typeof x === 'number') && x in e,
-      (x, context) =>
-        (typeof x === 'string' || typeof x === 'number') && x in e
-          ? t.success(e[x])
-          : t.failure(x, context),
+      (x: unknown): x is typeof e[keyof typeof e] => inValues(x),
+      (x, context) => (inValues(x) ? t.success(x) : t.failure(x, context)),
       t.identity,
     ),
   };

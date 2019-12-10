@@ -1,4 +1,4 @@
-import { Decoder, runtime, schema, extend } from '..';
+import { Decoder, runtime, schema, extend, enumSchema } from '..';
 import { casters, Latitude, Longitude, Int, NonEmptyString } from '../types';
 import * as t from 'io-ts';
 
@@ -518,3 +518,15 @@ const d = dec.decode('BinaryStr', '1', e => {
 if (d) {
   console.log('CasterBuilder', d);
 }
+
+// enum
+enum OrderStatus {
+  Pending = 'pending',
+  Complete = 'complete',
+}
+
+dec.register(enumSchema('OrderStatus', OrderStatus));
+
+const st = 'pending';
+console.log(OrderStatus);
+test('enumSchema', 'OrderStatus', st);
