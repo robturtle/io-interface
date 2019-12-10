@@ -458,3 +458,37 @@ const decoded188 = dec.decode(
 if (JSON.stringify(good188) !== JSON.stringify(decoded188)) {
   throw new Error('nested Array NOT WORKING!!!');
 }
+
+// union type
+console.log('union types');
+interface House {
+  owner: Customer | null;
+}
+dec.register(schema<House>());
+
+const house = {
+  owner: {
+    firstName: 'Yang',
+    lastName: 'Liu',
+  },
+};
+
+const decodedHouse = dec.decode('House', house, e => {
+  throw e;
+});
+if (!decodedHouse) {
+  throw new Error('Union type NOT WORKING!');
+} else {
+  console.log(decodedHouse);
+}
+
+const house2 = { owner: null };
+const decodedHouse2 = dec.decode('House', house2, e => {
+  throw e;
+});
+if (!decodedHouse2) {
+  throw new Error('Union type (with null) NOT WORKING!');
+} else {
+  console.log(decodedHouse2);
+}
+console.log('-'.repeat(40));

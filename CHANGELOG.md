@@ -1,3 +1,10 @@
+## 1.8.0
+
+- supports union types
+- supports null type
+
+So we can express the type `string | null`
+
 ## 1.7.3
 
 - export `Int` branded type

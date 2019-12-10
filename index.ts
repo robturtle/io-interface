@@ -31,6 +31,7 @@ const TypeC: t.Type<runtime.Type> = t.recursion('TypeC', () =>
     ParameterizedTypeC,
     GenericTypeC,
     LiteralTypeC,
+    UnionTypeC,
   ]),
 );
 
@@ -50,6 +51,10 @@ const GenericTypeC: t.Type<runtime.GenericType> = t.type({
 const ParameterizedTypeC: t.Type<runtime.ParameterizedType> = t.type({
   selfType: t.string,
   typeArgumentType: TypeC,
+});
+
+const UnionTypeC: t.Type<runtime.UnionType> = t.type({
+  union: t.array(TypeC),
 });
 
 const PropertyC: t.Type<runtime.Property> = t.type({
@@ -326,6 +331,9 @@ export class Decoder implements ICaster {
     if (LiteralTypeC.is(type)) {
       return t.type(this.buildCasters(type.props));
     }
+    if (UnionTypeC.is(type)) {
+      return type.union.map(t => this.buildTypeCaster(t)).reduce((t1, t2) => t.union([t1, t2]));
+    }
     switch (type) {
       case 'string':
         return t.string;
@@ -333,6 +341,8 @@ export class Decoder implements ICaster {
         return t.number;
       case 'boolean':
         return t.boolean;
+      case 'null':
+        return t.null;
       default:
         throw new Error(`illegal decoder type ${JSON.stringify(type)}`);
     }

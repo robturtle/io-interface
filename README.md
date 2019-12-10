@@ -51,16 +51,17 @@ Since its main purpose is for JSON validation, only a subset of interface syntax
 2. Other acceptable interfaces
 3. Classes
 4. Literal types (i.e. `interface Address { pos: { lat: number; lng: number; } }`, here `Address.pos` is a literal type)
-5. Array type of 1-4
+5. Union types
+6. null type
+7. Array type of 1-5
 
 Also
 
 1. The fields in the interface CAN be marked as optional.
 2. Generic types are NOT supported.
-3. Union types are NOT supported yet (PR, feature request welcomed if you really need this to work with a bad-designed API)
-4. `null`, `any`, `unknown` are illegal.
-5. Recursive types are NOT supported.
-6. intersection types are NOT supported YET. (it's useful to implement custom validations)
+3. `any`, `unknown` are illegal.
+4. Recursive types are NOT supported.
+5. intersection types are NOT supported YET.
 
 ### You need declare schemas in topological order
 
