@@ -87,12 +87,21 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
  */
 export const ATTRS_KEYWORD = 'attrs';
 
-/** @since 1.6.0 */
-export interface Builder {
+/** @since 1.9.0 */
+export interface ClassBuilder {
   schema: runtime.Schema;
   constructor: new (...args: any[]) => any;
   className: string;
 }
+
+/** @since 1.9.0 */
+interface CasterBuilder {
+  typeName: string;
+  caster: Caster;
+}
+
+/** @since 1.9.0 */
+export type Builder = ClassBuilder | CasterBuilder;
 
 /**
  * Extends type T with mixin U.
@@ -122,8 +131,12 @@ export function extend<T extends object>() {
   };
 }
 
-function isBuilder(o: any): o is Builder {
+function isClassBuilder(o: any): o is ClassBuilder {
   return ['schema', 'className', 'constructor'].every(k => k in o);
+}
+
+function isCasterBuilder(o: any): o is CasterBuilder {
+  return ['typeName', 'caster'].every(k => k in o);
 }
 
 /** @since 1.7.0 */
@@ -153,9 +166,11 @@ export class Decoder implements ICaster {
   constructor(schemas: Array<runtime.Schema | Builder> = [], casters: Casters = {}) {
     Object.assign(this.casters, casters);
     schemas.forEach(s => {
-      if (isBuilder(s)) {
+      if (isClassBuilder(s)) {
         this.todos[s.schema.name] = true;
         this.todos[s.className] = true;
+      } else if (isCasterBuilder(s)) {
+        this.todos[s.typeName] = true;
       } else {
         this.todos[s.name] = true;
       }
@@ -220,8 +235,11 @@ export class Decoder implements ICaster {
 
   /** @since 1.6.0 */
   register(spec: runtime.Schema | Builder) {
-    if (isBuilder(spec)) {
+    if (isClassBuilder(spec)) {
       this.registerBuilder(spec);
+    } else if (isCasterBuilder(spec)) {
+      this.checkRegistry(spec.typeName);
+      this.casters[spec.typeName] = spec.caster;
     } else {
       this.registerSchema(spec);
     }
@@ -260,7 +278,7 @@ export class Decoder implements ICaster {
     }
   }
 
-  private registerBuilder(spec: Builder) {
+  private registerBuilder(spec: ClassBuilder) {
     this.registerSchema(spec.schema);
     const name = spec.className;
     if (name in this.resolves) {
@@ -271,7 +289,7 @@ export class Decoder implements ICaster {
     this.resolves[name] = true;
   }
 
-  private buildConstructor(spec: Builder) {
+  private buildConstructor(spec: ClassBuilder) {
     const schemaCaster = this.getCaster(spec.schema.name);
     const constructor = spec.constructor;
     return schemaCaster.pipe(
