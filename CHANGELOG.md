@@ -1,3 +1,9 @@
+## 1.9.0
+
+- supports `enumSchema`
+- supports registering with `CasterBuilder`
+- renames `Builder` to `ClassBuilder`
+
 ## 1.8.0
 
 - supports union types

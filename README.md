@@ -134,6 +134,22 @@ export const casters = {
 };
 ```
 
+### Enum types
+
+You can easily register an enum using `enumSchema`
+
+```typescript
+import { enumSchema } from 'io-interface';
+
+enum Status {
+  Pending = 'pending',
+  Complete = 'complete',
+}
+
+decoder.register(enumSchema('Status', Status));
+const status = decoder.decode<Status>('Status', 'pending');
+```
+
 ### Attach custom values
 
 Sometimes you want attach some custom values onto the object. You can do it via the magical attribute `attrs`. If a field of the interface is named `attrs`, it will bypass the validation and be assigned as an empty object. So you should declare all fields inside `attrs` as **optional** since they're empty from the data source in the first place.
