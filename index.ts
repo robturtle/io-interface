@@ -14,6 +14,23 @@ export function schema<T extends object>(): runtime.Schema {
   );
 }
 
+/** @since 1.9.0 */
+export function enumSchema(name: string, e: any): CasterBuilder {
+  return {
+    typeName: name,
+
+    caster: new t.Type(
+      name,
+      (x: unknown): x is typeof e => (typeof x === 'string' || typeof x === 'number') && x in e,
+      (x, context) =>
+        (typeof x === 'string' || typeof x === 'number') && x in e
+          ? t.success(e[x])
+          : t.failure(x, context),
+      t.identity,
+    ),
+  };
+}
+
 /** @since 1.0.0 */
 export interface Caster<T = any> extends t.Type<T> {}
 
@@ -238,7 +255,6 @@ export class Decoder implements ICaster {
     if (isClassBuilder(spec)) {
       this.registerBuilder(spec);
     } else if (isCasterBuilder(spec)) {
-      this.checkRegistry(spec.typeName);
       this.casters[spec.typeName] = spec.caster;
     } else {
       this.registerSchema(spec);

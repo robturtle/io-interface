@@ -1,5 +1,6 @@
 import { Decoder, runtime, schema, extend } from '..';
 import { casters, Latitude, Longitude, Int, NonEmptyString } from '../types';
+import * as t from 'io-ts';
 
 interface Location {
   lat: number;
@@ -492,3 +493,28 @@ if (!decodedHouse2) {
   console.log(decodedHouse2);
 }
 console.log('-'.repeat(40));
+
+// CasterBuilder
+const BinaryStr = new t.Type(
+  'BinaryStr',
+  (x: unknown): x is number => x === 1 || x === 0,
+  (x, context) => {
+    if (x === '1') {
+      return t.success(1);
+    } else if (x === '0') {
+      return t.success(0);
+    } else {
+      return t.failure(x, context);
+    }
+  },
+  x => x.toString(),
+);
+
+dec.register({ typeName: 'BinaryStr', caster: BinaryStr });
+
+const d = dec.decode('BinaryStr', '1', e => {
+  throw e;
+});
+if (d) {
+  console.log('CasterBuilder', d);
+}
