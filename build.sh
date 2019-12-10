@@ -12,5 +12,7 @@ cp ./node_modules/ts-transformer-decoder-cast/transformer.ts ./transform-request
 
 tsc
 npx pretty-quick
+cp ./runtime-schema.* lib/
+cp ./transform-interface.* lib/
 cp package.json lib/
 cp README.md lib/
