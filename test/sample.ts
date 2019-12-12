@@ -532,3 +532,27 @@ test('enumSchema', 'OrderStatus', st);
 
 const st2 = 'pendding';
 test('enumSchema error example', 'OrderStatus', st2, false);
+
+// should not use validate in pipe, should just rerun it
+interface IDay {
+  date: Date | null;
+}
+const Day = extend<IDay>()(d => ({
+  get d() {
+    return d.date;
+  },
+}));
+type Day = InstanceType<typeof Day>;
+
+dec.register({
+  schema: schema<IDay>(),
+  className: 'Day',
+  constructor: Day,
+});
+
+const day = dec.decode<Day>('Day', { date: '2019-11-21T20:44:23.007Z' });
+if (day) {
+  console.log('pipe works!');
+} else {
+  throw new Error('pipe NOT WORKING!');
+}

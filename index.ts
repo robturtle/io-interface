@@ -310,8 +310,7 @@ export class Decoder implements ICaster {
       new t.Type(
         spec.className,
         (input: unknown): input is InstanceType<typeof constructor> => input instanceof constructor,
-        (input, context) =>
-          either.chain(schemaCaster.validate(input, context), s => t.success(new constructor(s))),
+        (input, context) => t.success(new constructor(input)),
         t.identity,
       ),
     );
