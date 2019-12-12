@@ -213,7 +213,7 @@ const guest = new Guest(iGuest);
 You may subclass `Model<T>` to extend the interface:
 
 ```typescript
-import { extend } from 'io-interface';
+import { Model } from 'io-interface';
 
 interface IUser {
   firstName: string;
@@ -221,7 +221,7 @@ interface IUser {
 }
 
 interface User extends IUser {}
-class User {
+class User extends Model<IUser> { // IMPORTANT!!! You need Model<T> to get the constructor
   get name(): string {
     return `${user.firstName} ${user.lastName}`;
   },
