@@ -1,3 +1,8 @@
+## 1.10.2
+
+- deprecates `attrs`
+- no longer deprecating `decodeArray` due to usage frequency
+
 ## 1.10.0
 
 - new way to extend type to a class: `Model`

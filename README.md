@@ -22,12 +22,7 @@ export interface User {
 // Step 2. add `schema<User>()` to the manifest to register
 import { schema, Decoder } from 'io-interface';
 
-const schemas = [
-  //...
-  schema<User>(),
-];
-
-export const decoder = new Decoder(schemas);
+export const decoder = new Decoder([schema<User>()]);
 
 // src/app/users/user.service.ts
 // Step 3. use `decode()` and `decodeArray()` to do the validation/conversion.
@@ -134,6 +129,19 @@ export const casters = {
 };
 ```
 
+Usage:
+
+```typescript
+import { casters } from 'io-interface/types';
+
+const dec = new Decoder(
+  [
+    /* schemas */
+  ],
+  casters,
+);
+```
+
 ### Enum types
 
 You can easily register an enum using `enumSchema`
@@ -150,67 +158,9 @@ decoder.register(enumSchema('Status', Status));
 const status = decoder.decode<Status>('Status', 'pending');
 ```
 
-### Attach custom values
-
-Sometimes you want attach some custom values onto the object. You can do it via the magical attribute `attrs`. If a field of the interface is named `attrs`, it will bypass the validation and be assigned as an empty object. So you should declare all fields inside `attrs` as **optional** since they're empty from the data source in the first place.
-
-```typescript
-interface Compound {
-  lat: number;
-  lng: number;
-  attrs: {
-    // it will be an empty object after decoding
-    marker?: google.maps.Marker; // mark it as optional
-  };
-}
-
-// ...
-api.requestAndCast<Compound>(url).subscribe(compound => {
-  // here: compound.attrs === {}
-});
-
-// ...
-
-// after some biz logic ...
-compound.attrs.marker = new google.maps.Marker();
-// ...
-```
-
-So we have clear vision that which of the fields are from the data source and which of them are added later on.
-
-But please do **NOT** use this feature to do name mapping like:
-
-```typescript
-// do NOT do this!!!
-interface Order {
-  user_uid: string;
-  attrs: {
-    userUid: string;
-  };
-}
-```
-
-This feature is only used to attach new values. Tasks like name mapping should live inside a middleware. And feature request for this is welcomed (but without guarantee that it will be implemented soon).
-
 ### Extending the interface
 
-The Decoder can convert the outcome to an instance if you register with a `Builder` object:
-
-```typescript
-decoder.register({
-  schema: schema<IGuest>(),
-  constructor: Guest,
-  className: 'Guest',
-});
-
-const guest = decoder.decode<Guest>('Guest', data);
-
-// the above line is equivalent to
-const iGuest = decoder.decode<IGuest>('IGuest', data);
-const guest = new Guest(iGuest);
-```
-
-You may subclass `Model<T>` to extend the interface:
+You may subclass `Model<T>` to extend the interface to a class:
 
 ```typescript
 import { Model } from 'io-interface';
@@ -292,6 +242,7 @@ The example code is as follows.
 ```typescript
 import { Injectable } from '@angular/core';
 import { Decoder, schema } from 'io-interface';
+import { casters } from 'io-interface/types';
 import { BadTodo } from '../models/bad-todo';
 import { Todo } from '../models/todo';
 
@@ -301,7 +252,7 @@ import { Todo } from '../models/todo';
 export class DecoderService {
   readonly schemas = [schema<Todo>(), schema<BadTodo>()];
 
-  readonly dec = new Decoder(this.schemas);
+  readonly dec = new Decoder(this.schemas, casters);
 
   decode<T>(typeName: string, data: unknown): T | undefined {
     return this.dec.decode<T>(typeName, data, console.error);

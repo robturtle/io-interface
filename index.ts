@@ -91,6 +91,7 @@ const LiteralTypeC: t.Type<runtime.LiteralType> = t.type({
  *
  * The Decoder will think it as "any" and assign an empty
  * object to it.
+ * @deprecated use Model<T> instead
  * @since 1.5.0
  * @example
  * interface User {
@@ -238,7 +239,7 @@ export class Decoder implements ICaster {
   }
 
   /**
-   * @deprecated use decode<T[]>({ type: 'Array', arg: T }, data, onError)
+   * A shortcut to decode<T[]>({ type: 'Array', arg: T }, data, onError)
    * @since 1.1.0
    */
   decodeArray<T>(
