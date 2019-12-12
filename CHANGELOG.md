@@ -1,3 +1,8 @@
+## 1.10.0
+
+- new way to extend type to a class: `Model`
+- deprecates the old way `extend`
+
 ## 1.9.0
 
 - supports `enumSchema`

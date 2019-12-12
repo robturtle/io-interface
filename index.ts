@@ -120,6 +120,7 @@ export type Builder = ClassBuilder | CasterBuilder;
 
 /**
  * Extends type T with mixin U.
+ * @deprecated use Model<T> instead
  * @since 1.6.0
  * @example
  * interface IUser {
@@ -144,6 +145,24 @@ export function extend<T extends object>() {
     };
     return (impl as any) as new (data: T) => T & U;
   };
+}
+
+/**
+ * Allow constructing from a plain object.
+ * @since 1.10.0
+ * @example
+ * interface IUser { name: string; }
+ * interface User extends IUser {}
+ * class User extends Model<IUser> {
+ *   get title() {
+ *     return `Dr. ${this.name}`;
+ *   }
+ * }
+ */
+export class Model<T> {
+  constructor(data: T) {
+    Object.assign(this, data);
+  }
 }
 
 function isClassBuilder(o: any): o is ClassBuilder {

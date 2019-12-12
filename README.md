@@ -210,7 +210,7 @@ const iGuest = decoder.decode<IGuest>('IGuest', data);
 const guest = new Guest(iGuest);
 ```
 
-You may use the `extend` function to extend the interface:
+You may subclass `Model<T>` to extend the interface:
 
 ```typescript
 import { extend } from 'io-interface';
@@ -220,52 +220,22 @@ interface IUser {
   lastName: string;
 }
 
-const User = extend<IUser>()(user => ({
+interface User extends IUser {}
+class User {
   get name(): string {
     return `${user.firstName} ${user.lastName}`;
   },
-}));
-
-type User = InstanceType<typeof User>;
+}
 
 decoder.register({
   schema: schema<IUser>(),
-  constructor: User, // matches "const User"
-  className: 'User', // matches name of "type User"
+  constructor: User,
+  className: 'User',
 });
 
 const user = decoder.decode<User>('User', { firstName: 'Yang', lastName: 'Liu' });
 
 console.log(user.name);
-```
-
-#### Extended constructors are composible
-
-You can use a registered extended type as a field of other interface.
-
-```typescript
-interface ICompany {
-  user: User; // use a registed extended type here
-  name: string;
-}
-const Company = extend<ICompany>()(c => ({
-  get boss(): string {
-    return c.user.name;
-  },
-}));
-type Company = InstanceType<typeof Company>;
-
-// register company
-
-const json = {
-  name: 'Good Inc',
-  user: {
-    firstName: 'Yang',
-    lastName: 'Liu',
-  },
-};
-
-const company = decoder.decode<Company>('Company', json);
 ```
 
 ## Installation
@@ -432,7 +402,7 @@ class ApiService {
     options: ApiOptions,
     cb: (c: Decoder, data: unknown, e?: DecoderCallback<T>) => T | undefined,
   ) {
-    const data: Object = await fecth(options);
+    const data: Object = await fetch(options);
     const casted: T = cb(c, data, console.error);
     return casted;
   }

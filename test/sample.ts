@@ -1,4 +1,4 @@
-import { Decoder, runtime, schema, extend, enumSchema } from '..';
+import { Decoder, runtime, schema, extend, enumSchema, Model } from '..';
 import { casters, Latitude, Longitude, Int, NonEmptyString } from '../types';
 import * as t from 'io-ts';
 
@@ -372,13 +372,19 @@ interface ICustomer {
   lastName: string;
 }
 
-const Customer = extend<ICustomer>()(cus => ({
-  get fullName(): string {
-    return `${cus.firstName} ${cus.lastName}`;
-  },
-}));
+// const Customer = extend<ICustomer>()(cus => ({
+//   get fullName(): string {
+//     return `${cus.firstName} ${cus.lastName}`;
+//   },
+// }));
 
-type Customer = InstanceType<typeof Customer>;
+// type Customer = InstanceType<typeof Customer>;
+interface Customer extends ICustomer {}
+class Customer extends Model<ICustomer> {
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
 
 dec.register({
   schema: schema<ICustomer>(),
@@ -394,6 +400,7 @@ const cus: Customer | undefined = dec.decode('Customer', good15, e => {
 
 if (cus) {
   console.log('extend function:', JSON.stringify(cus, null, 2));
+  console.log('extend function: get fullName():', cus.fullName);
 } else {
   throw new Error('extend function NOT WORKING!!!');
 }
@@ -407,13 +414,12 @@ interface ICompany {
   customer: Customer;
 }
 
-const Company = extend<ICompany>()(c => ({
+interface Company extends ICompany {}
+class Company extends Model<ICompany> {
   get boss(): string {
-    return c.name;
-  },
-}));
-
-type Company = InstanceType<typeof Company>;
+    return this.name;
+  }
+}
 
 dec.register({
   schema: schema<ICompany>(),
@@ -433,7 +439,7 @@ const company: Company | undefined = dec.decode<Company>('Company', good37, e =>
   throw e;
 });
 if (company) {
-  console.log('nested constructor passed', company);
+  console.log('nested constructor passed', JSON.stringify(company, null, 2));
 } else {
   throw new Error('nested constructor NOT WORKING!!!');
 }
@@ -537,12 +543,12 @@ test('enumSchema error example', 'OrderStatus', st2, false);
 interface IDay {
   date: Date | null;
 }
-const Day = extend<IDay>()(d => ({
+interface Day extends IDay {}
+class Day extends Model<IDay> {
   get d() {
-    return d.date;
-  },
-}));
-type Day = InstanceType<typeof Day>;
+    return this.date;
+  }
+}
 
 dec.register({
   schema: schema<IDay>(),
